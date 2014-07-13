@@ -2,9 +2,9 @@
   Dongbu Robot HerkuleX Servo Motor Example
   
   Author : JaeGon - 2012.11.08
-*/
+  */
 
-#include <HerkuleX.h>
+  #include <HerkuleX.h>
 
 #define RX   8        // Connected with HerkuleX TX Pin
 #define TX   9        // Connected with HerkuleX RX Pin
@@ -15,7 +15,7 @@ void setup()
   Serial.begin(9600);    // Open serial communications
   // Open SoftwareSerial with 57600 baudrate
   // To set up HerkuleX servo baudrate, See. the library manual
-  HerkuleX.begin(115200, RX, TX);  
+  HerkuleX.begin(57600, RX, TX);  
   delay(10);
   // Torque ON
   HerkuleX.torqueOn(MOTORID);
@@ -29,14 +29,14 @@ void loop() // run over and over
   if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
     HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
   }
-    
+
   if (Serial.available() > 0) {  // If Serial(with PC) is available
     incomingbyte = Serial.read();  // Reading a byte from PC
     
     if (incomingbyte == '1') {
-      Serial.println("Move angle");
+      Serial.println("Move to 0 degree");
       // Move HerkuleX to -30 degree by 112ms, Turn blue LED on.
-      HerkuleX.moveAngle(MOTORID, 90, 10, HERKULEX_LED_BLUE);  
+      HerkuleX.moveAngle(MOTORID, 0, 2000, HERKULEX_LED_RED);  
     }
     
     if (incomingbyte == 'a') {
@@ -46,21 +46,15 @@ void loop() // run over and over
     }
     
     if (incomingbyte == '2') {
-      Serial.println("Move pos");
-      // Move HerkuleX 512, 11.2ms * 200 = 2240ms, Turn red LED on
-      HerkuleX.movePos(MOTORID, 512, 200, HERKULEX_LED_RED);
+      Serial.println("Move to 90 degree");
+      // Move HerkuleX to 100 degree by 112ms, Turn blue LED on.
+      HerkuleX.moveAngle(MOTORID, 90, 2000, HERKULEX_LED_BLUE);  
     }
-    
-    if (incomingbyte == 'p') {
-      Serial.println("Current pos");
-      // Get current position and send it to PC
-      Serial.println(HerkuleX.getPos(MOTORID));
-    }
- 
-    if (incomingbyte == '3')  {
-      Serial.println("Turn");
-      // Infinite turn, CCW 600, 112ms, Turn green, blue, and red on
-      HerkuleX.turn(MOTORID, 600, 10, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);       // 300 CCW, -300 CW
+
+    if (incomingbyte == '3') {
+      Serial.println("Move to 90 degree");
+      // Move HerkuleX to 100 degree by 112ms, Turn blue LED on.
+      HerkuleX.moveAngle(MOTORID, 110, 1000, HERKULEX_LED_GREEN);  
     }
     
     if (incomingbyte == 't') {
@@ -77,4 +71,4 @@ void loop() // run over and over
   }
 }
 
- 
+
