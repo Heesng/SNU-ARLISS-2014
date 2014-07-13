@@ -18,8 +18,8 @@ GPS gpsEx;
 Servo Carsteer;
 Servo Carspeed;
 LSM303 compass;
-float destlat = 37.275398;
-float destlong = 126.569114;
+float destlat = 37.275371;
+float destlong = 126.569137;
 
 void setup(){
   Serial.begin(9600);
@@ -54,14 +54,15 @@ void loop(){
   float heading_ = compass.heading();
   Serial.println("d");
   go(destlat,destlong,lat,lng, heading_);
-//  Serial.println(lng,6);
+  Serial.println(lat,6);
+  Serial.println(lng,6);
 //  steer(destlat,destlong,lat,lng,heading_);
   Serial.println("e");
 }
 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
     if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng)> 0.00026*0.00026){
-      vel(60);
+      vel(30);
       steer(destlat,destlong,lat,lng,heading_);
     }
     else{
