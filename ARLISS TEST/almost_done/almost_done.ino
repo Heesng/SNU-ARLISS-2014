@@ -20,6 +20,7 @@ Servo Carspeed;
 LSM303 compass;
 float destlat = 37.275371;
 float destlong = 126.569137;
+float steer_car;
 
 void setup(){
   Serial.begin(9600);
@@ -77,11 +78,19 @@ void steer(float destlat,float destlong,float flatitude,float flongitude,float h
   //float dsx = cos(satheading*3.14/180);
   //float dsy = sin(satheading*3.14/180);
   //int power = 0;//1/((destlat-flatitude)*(destlat-flatitude)+(destlong-flongitude)*(destlong-flongitude));
-  // float angle = atan((dy)/(dx))*180/3.141592;
-  float steer_car = angle - heading_;
-  if  (steer_car<0){
-    steer_car = steer_car + 360;
+  // float angle = atan((dy+power*dsy)/(dx+power*dsx))*180/3.141592;
+  if((dy>0)&&(dx>0)){
+    steer_car = -angle;
   }
+  else if((dy>0)&&(dx<0)){
+    steer_car = -angle;
+  }
+  else if((dy<0)&&(dx>0)){
+    steer_car = -90 - angle;
+  }
+  else if((dy<0)&&(dx<0)){
+    steer_car = 90 + angle;
+  }  
   float osteer=0;
 //  if (180.0 <= steer_car && steer_car < 270.0){
 //    osteer = 60;
