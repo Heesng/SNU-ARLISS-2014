@@ -63,7 +63,7 @@ void loop(){
 }
 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
-    if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng)> 0.00026*0.00026){
+    if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng)> 0.000026*0.000026){
       vel(30);
       steer(destlat,destlong,lat,lng,heading_);
     }
@@ -99,14 +99,14 @@ void steer(float destlat,float destlong,float flatitude,float flongitude,float h
   
   float osteer=0;
   if (0 <= steer_car && steer_car < 180){
-    osteer = Pgain*steer_car + Dgain*(steer_car - steer_car0) + Igain*Isteer_car;
+    osteer = Pgain*steer_car + Dgain*(steer_car - steer_car0) + Igain*isteer_car;
     if(osteer>180){
       osteer = 180;
     }
     osteer = map(osteer, 0 , 180 , 90 , 0);
   }
   else if(-180 <= steer_car && steer_car < 0){
-    osteer = Pgain*steer_car + Dgain*(steer_car - steer_car0) + Igain*Isteer_car;
+    osteer = Pgain*steer_car + Dgain*(steer_car - steer_car0) + Igain*isteer_car;
     if(osteer<-180){
       osteer = -180;
     }
