@@ -21,8 +21,9 @@ Servo Carspeed;
 LSM303 compass;
 float destlat = 37.275398;
 float destlong = 126.569114;
+float steer_car;
 double Setpoint, Input, Output;
-PID myPID(&Input, &Output, &Setpoint,2,5,1, DIRECT);
+PID myPID(&Input, &Output, &Setpoint,1,0,0, DIRECT);
 
 void setup(){
   Serial.begin(9600);
@@ -49,20 +50,20 @@ void setup(){
 
 void loop(){
   gpsEx.renewGPS();
-//  Serial.println("a");
+  Serial.println("a");
   float lat = gpsEx.getLat()/100;
   float lng = gpsEx.getLng()/100;
   //double satheading = 0;//rf.getheading();
   //for compass sensor
-//  Serial.println("b");
+  Serial.println("b");
   compass.read();
-//  Serial.println("c");
+  Serial.println("c");
   float heading_ = compass.heading();
-//  Serial.println("d");
+  Serial.println("d");
   go(destlat,destlong,lat,lng, heading_);
 //  Serial.println(lng,6);
 //  steer(destlat,destlong,lat,lng,heading_);
-//  Serial.println("e");
+  Serial.println("e");
 }
 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
@@ -88,7 +89,7 @@ void steer(float destlat,float destlong,float flatitude,float flongitude,float h
   Input = heading_;
   Setpoint = angle;
   myPID.Compute();
-  float steer_car = Output;
+  steer_car = Output;
 
 //  float steer_car = angle - heading_;
   if  (steer_car<0){
@@ -97,6 +98,8 @@ void steer(float destlat,float destlong,float flatitude,float flongitude,float h
   else if  (steer_car>180){
     steer_car = 175;
   }
+  Serial.println(heading_);
+  Serial.println(Output);
   Serial.println(steer_car);
   float osteer=0;
 //  if (180.0 <= steer_car && steer_car < 270.0){
