@@ -20,7 +20,8 @@ Servo Carspeed;
 LSM303 compass;
 float destlat = 37.275371;
 float destlong = 126.569137;
-float steer_car;
+float steer_car,dsteer_car,isteer_car = 0, steer_car0;
+float Pgain, Dgain, Igain;
 
 void setup(){
   Serial.begin(9600);
@@ -80,41 +81,36 @@ void steer(float destlat,float destlong,float flatitude,float flongitude,float h
   //int power = 0;//1/((destlat-flatitude)*(destlat-flatitude)+(destlong-flongitude)*(destlong-flongitude));
   // float angle = atan((dy+power*dsy)/(dx+power*dsx))*180/3.141592;
   if((dy>0)&&(dx>0)){
-    steer_car = -angle;
+    steer_car = angle;
   }
   else if((dy>0)&&(dx<0)){
-    steer_car = -angle;
+    steer_car = angle;
   }
   else if((dy<0)&&(dx>0)){
-    steer_car = -90 - angle;
+    steer_car = 90 - angle;
   }
   else if((dy<0)&&(dx<0)){
-    steer_car = 90 + angle;
-  }  
+    steer_car = -90 - angle;
+  }
+  
+  dsteer_car = steer_car - steer_car0;
+  steer_car0 = steer_car;
+  isteer_car = isteer_car + dsteer_car;
+  
   float osteer=0;
-//  if (180.0 <= steer_car && steer_car < 270.0){
-//    osteer = 60;
-//  }
-//  else if(270.0 <= steer_car && steer_car <= 360.0){
-//    osteer = (3*steer_car)/9 - 30;
-//  }
-//  else if(0.0 <= steer_car && steer_car < 90.0){
-//    osteer = (3*steer_car)/9 + 90;
-//  }
-//  else if(90.0 <=steer_car && steer_car < 180.0){
-//    osteer = 120;
-//  }
-  if (180.0 <= steer_car && steer_car < 270.0){
-    osteer = 120;
+  if (0 <= steer_car && steer_car < 180){
+    osteer = Pgain*steer_car + Dgain*(steer_car - steer_car0) + Igain*Isteer_car;
+    if(osteer>180){
+      osteer = 180;
+    }
+    osteer = map(osteer, 0 , 180 , 90 , 0);
   }
-  else if(270.0 <= steer_car && steer_car <= 360.0){
-    osteer = map(steer_car, 270, 360, 120, 90);// (-1)*(3*steer_car)/9 + 210;
-  }
-  else if(0.0 <= steer_car && steer_car < 90.0){
-    osteer = map(steer_car, 0, 90, 90, 60);//(-1)*(3*steer_car)/9 + 90;
-  }
-  else if(90.0 <=steer_car && steer_car < 180.0){
-    osteer = 60;
+  else if(-180 <= steer_car && steer_car < 0){
+    osteer = Pgain*steer_car + Dgain*(steer_car - steer_car0) + Igain*Isteer_car;
+    if(osteer<-180){
+      osteer = -180;
+    }
+    osteer = map(osteer, -180 , 0 , 180 , 90);
   }
   Carsteer.write(osteer);
 }
