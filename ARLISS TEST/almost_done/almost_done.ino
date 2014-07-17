@@ -45,21 +45,21 @@ void setup(){
 
 void loop(){
   gpsEx.renewGPS();
-  Serial.println("a");
+  //Serial.println("a");
   float lat = gpsEx.getLat()/100;
   float lng = gpsEx.getLng()/100;
   //double satheading = 0;//rf.getheading();
   //for compass sensor
-  Serial.println("b");
+  //Serial.println("b");
   compass.read();
-  Serial.println("c");
+  //Serial.println("c");
   float heading_ = compass.heading();
-  Serial.println("d");
+  //Serial.println("d");
   go(destlat,destlong,lat,lng, heading_);
-  Serial.println(lat,6);
-  Serial.println(lng,6);
+  //Serial.println(lat,6);
+  //Serial.println(lng,6);
 //  steer(destlat,destlong,lat,lng,heading_);
-  Serial.println("e");
+  //Serial.println("e");
 }
 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
@@ -81,38 +81,62 @@ void steer(float destlat,float destlong,float flatitude,float flongitude,float h
   //int power = 0;//1/((destlat-flatitude)*(destlat-flatitude)+(destlong-flongitude)*(destlong-flongitude));
   // float angle = atan((dy+power*dsy)/(dx+power*dsx))*180/3.141592;
   if((dy>0)&&(dx>0)){
-    steer_car = angle;
+    angle = 90 - angle;
   }
   else if((dy>0)&&(dx<0)){
-    steer_car = angle;
+    angle = 270 - angle;
   }
   else if((dy<0)&&(dx>0)){
-    steer_car = 90 - angle;
+    angle = 90 - angle;
   }
   else if((dy<0)&&(dx<0)){
-    steer_car = -90 - angle;
+    angle = 270 - angle;
   }
   
-  dsteer_car = steer_car - steer_car0;
+  Serial.println(angle);
+  
+  steer_car = angle - heading_;
+  
+  Serial.println(steer_car);
+  
+  float psteer_car = steer_car;
+  if(psteer_car<0){
+    psteer_car = psteer_car + 360;
+  }
+  
   steer_car0 = steer_car;
+  dsteer_car = steer_car - steer_car0;
   isteer_car = isteer_car + dsteer_car;
   
-  float osteer=0;
-  if (0 <= steer_car && steer_car < 180){
-    osteer = Pgain*steer_car + Dgain*(steer_car - steer_car0) + Igain*isteer_car;
-    if(osteer>180){
-      osteer = 180;
-    }
-    osteer = map(osteer, 0 , 180 , 90 , 0);
+  float osteer_car = Pgain*steer_car + Dgain*dsteer_car + Igain*isteer_car;
+  float osteer = 0;
+  if (180.0 <= psteer_car && psteer_car < 270.0){
+    osteer = 120;
   }
-  else if(-180 <= steer_car && steer_car < 0){
-    osteer = Pgain*steer_car + Dgain*(steer_car - steer_car0) + Igain*isteer_car;
-    if(osteer<-180){
-      osteer = -180;
-    }
-    osteer = map(osteer, -180 , 0 , 180 , 90);
+  else if(270.0 <= psteer_car && psteer_car <= 360.0){
+    osteer = map(psteer_car, 270, 360, 120, 90);// (-1)*(3*steer)/9 + 210;
   }
+  else if(0.0 <= psteer_car && psteer_car < 90.0){
+    osteer = map(psteer_car, 0, 90, 90, 60);//(-1)*(3*steer)/9 + 90;
+  }
+  else if(90.0 <= psteer_car && psteer_car < 180.0){
+    osteer = 60;
+  }
+  
+//  if (0 <= steer_car && steer_car < 180){
+//    if(osteer>180){
+//      osteer = 180;
+//    }
+//    osteer = map(osteer, 0 , 180 , 90 , 0);
+//  }
+//  else if(-180 <= steer_car && steer_car < 0){
+//    if(osteer<-180){
+//      osteer = -180;
+//    }
+//    osteer = map(osteer, -180 , 0 , 180 , 90);
+//  }
   Carsteer.write(osteer);
+  Serial.println(osteer);
 }
 
 void vel(int velocity){
