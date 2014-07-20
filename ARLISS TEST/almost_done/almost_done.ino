@@ -116,11 +116,23 @@ void steer(float destlat,float destlong,float flatitude,float flongitude,float h
   }
   else if(270.0 <= psteer_car && psteer_car <= 360.0){
     //osteer = map(psteer_car, 270, 360, 120, 90);// (-1)*(3*steer)/9 + 210;
-    osteer = 90*pow( 2, osteer_car);
+    //osteer = 180 - 90*pow( 2, osteer_car);
+    if(osteer_car<-90){
+      osteer = 120;
+    }
+    else{
+      osteer = 180 - 90*pow( 1.1 , osteer_car);
+    }
   }
   else if(0.0 <= psteer_car && psteer_car < 90.0){
     //osteer = map(psteer_car, 0, 90, 90, 60);//(-1)*(3*steer)/9 + 90;
-    osteer = 90*pow( 2, -osteer_car);
+    //osteer = 90*pow( 2, -osteer_car);
+    if(osteer_car>90){
+      osteer = 60;
+    }
+    else{
+      osteer = 90*pow( 1.1 , -osteer_car);
+    }
   }
   else if(90.0 <= psteer_car && psteer_car < 180.0){
     osteer = 60;
