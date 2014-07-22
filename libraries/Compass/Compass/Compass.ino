@@ -9,12 +9,9 @@ void setup(){
 }
 
 void loop(){
-  comp.renewHeading();
+  comp.renew();
   float heading = comp.getHeading();
-
   Serial.print(heading);
   Serial.println("degree");
   delay(100);
-
-
 }
