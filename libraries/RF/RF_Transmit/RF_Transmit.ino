@@ -14,10 +14,10 @@ void loop(){
   String A = "";
   while(Serial.available()>0){
     char c = Serial.read();
-    A += c
+    A += c;
   }
   if(A != ""){
-    rfEx.SendPacket(A);
+    rfEx.sendPck(A);
   }
   delay(500);
 }
