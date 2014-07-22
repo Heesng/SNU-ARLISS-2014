@@ -4,22 +4,26 @@
 
 #include "Arduino.h"
 
-
 class ADCS{
 public:
 	ADCS();
+	int renew();
 	void control();
-	int checkAtt();
-
+	int reelPara();
+	float gettheta();
 
 private:
-	int pwmPin = 7;
- 	int enablePin = 5;
- 	int dirPin = 6;
+	int pwmPin1;
+	int enablePin1;
+	int dirPin1;
+
+	int pwmPin2;
+	int enablePin2;
+	int dirPin2;
  	//Acclerometer Pin definitions
- 	int XAccPin = 0;
- 	int YAccPin = 1;
- 	int ZAccPin = 2;
+ 	int XAccPin;
+ 	int YAccPin;
+ 	int ZAccPin;
 
 	//Data Variables
  	//Attitude
@@ -29,11 +33,10 @@ private:
  	float theta0;
 
 	//Control
-	 int wr;
-	 int PGain=5;
-	 int DGain=2;
-
-
+	float wr;
+	int wrInt;
+	int PGain;
+	int DGain;
 };
 
 #endif
