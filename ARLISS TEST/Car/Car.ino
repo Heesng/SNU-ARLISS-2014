@@ -64,11 +64,12 @@ void loop(){
 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
     if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng)> 0.000026*0.000026){
-      vel(30);
+      vel(60);
       steer(destlat,destlong,lat,lng,heading_);
     }
     else{
-      vel(0);
+      vel(50);
+      align(heading_, sheading_);
     }
 }
 
@@ -176,3 +177,14 @@ void vel(int velocity){
   }
 //  }
 }
+
+void align(float heading_, float sheading_);{
+  
+  
+  
+  
+  
+  
+  
+}
+
