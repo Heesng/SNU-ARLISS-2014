@@ -22,6 +22,8 @@ float destlat = 37.275371;
 float destlong = 126.569137;
 float steer_car,dsteer_car,isteer_car = 0, steer_car0;
 float Pgain = 3, Dgain, Igain;
+float asteer_car,adsteer_car,aisteer_car = 0, asteer_car0;
+float aPgain = 3, aDgain, aIgain;
 
 void setup(){
   Serial.begin(9600);
@@ -179,12 +181,38 @@ void vel(int velocity){
 }
 
 void align(float heading_, float sheading_);{
+
+  asteer_car = sheading_ - heading_;
+    
+  float psteer_car = asteer_car;
+  if(psteer_car<0){
+    psteer_car = psteer_car + 360;
+  }
   
+  if(180 < psteer_car && psteer_car <= 360){
+    psteer_car = psteer_car - 360;
+  }
   
-  
-  
-  
-  
+  float osteer = 0;
+
+  if (-180.0 <= psteer_car && psteer_car < -90.0){
+    osteer = 120;
+  }
+  else if(-90.0 <= psteer_car && psteer_car <= 90.0){
+    //osteer = map(psteer_car, 270, 360, 120, 90);// (-1)*(3*steer)/9 + 210;
+    //osteer = 180 - 90*pow( 2, osteer_car);
+    if(osteer_car< -90){
+      osteer_car = -90;
+    }
+    else if(osteer_car>90){
+      osteer_car = 90;
+    }
+    osteer = map(osteer_car, -90, 90, 120, 60);
+  }
+  else if(90.0 <= psteer_car && psteer_car < 180.0){ 
+    osteer = 60;
+  }
+  Carsteer.write(osteer);  
   
 }
 
