@@ -9,7 +9,7 @@ Car functions
 */
 void vel(int a);
 void steer(float a,float b,float c,float d,float e);
-void go(float a,float b,float c,float d,float e);
+void go(float a,float b,float c,float d,float e, float f);
 
 /*
 Car Variables
@@ -57,25 +57,27 @@ void loop(){
   //Serial.println("c");
   float heading_ = compass.heading();
   //Serial.println("d");
-  go(destlat,destlong,lat,lng, heading_);
+  go(destlat,destlong,lat,lng, heading_, sheading_);
   //Serial.println(lat,6);
   //Serial.println(lng,6);
 //  steer(destlat,destlong,lat,lng,heading_);
   //Serial.println("e");
 }
 
-void go(float destlat,float destlong,float lat,float lng,float heading_){
-    if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng)> 0.000026*0.000026){
+void go(float destlat,float destlong,float lat,float lng,float heading_, float sheading_){
+  float semidestlat = destlat - 0.0009*cos(sheading_);
+  float semidestlong = destlong - 0.0009*sin(sheading_);
+    if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng)> 0.0009*0.0009){
       vel(60);
-      steer(destlat,destlong,lat,lng,heading_);
+      steer(semidestlat,semidestlong,lat,lng,heading_);
     }
     else{
-      vel(50);
-      align(heading_, sheading_);
+      vel(30);
+      steer(destlat,destlong,lat,heading_);
     }
 }
 
-void steer(float destlat,float destlong,float flatitude,float flongitude,float heading_){
+void steer(float destlat,float destlong,float flatitude,float flongitude, float heading_){
   float dy = destlat - flatitude;
   float dx = cos(flatitude*3.141592/180)*(destlong-flongitude);
   float angle = atan(dy/dx)*180/3.141592;
@@ -180,7 +182,23 @@ void vel(int velocity){
 //  }
 }
 
-void align(float heading_, float sheading_);{
+void align(float destlat,float destlong,float flatitude,float flongitude, float heading_, float sheading_){
+  float dy = destlat - flatitude;
+  float dx = cos(flatitude*3.141592/180)*(destlong-flongitude);
+  float angle = atan(dy/dx)*180/3.141592;
+
+  if((dy>0)&&(dx>0)){
+    angle = 90 - angle;
+  }
+  else if((dy>0)&&(dx<0)){
+    angle = 270 - angle;
+  }
+  else if((dy<0)&&(dx>0)){
+    angle = 90 - angle;
+  }
+  else if((dy<0)&&(dx<0)){
+    angle = 270 - angle;
+  }
 
   asteer_car = sheading_ - heading_;
     
@@ -195,21 +213,10 @@ void align(float heading_, float sheading_);{
   
   float osteer = 0;
 
-  if (-180.0 <= psteer_car && psteer_car < -90.0){
+  if (-180.0 <= psteer_car && psteer_car < 0.0){
     osteer = 120;
   }
-  else if(-90.0 <= psteer_car && psteer_car <= 90.0){
-    //osteer = map(psteer_car, 270, 360, 120, 90);// (-1)*(3*steer)/9 + 210;
-    //osteer = 180 - 90*pow( 2, osteer_car);
-    if(osteer_car< -90){
-      osteer_car = -90;
-    }
-    else if(osteer_car>90){
-      osteer_car = 90;
-    }
-    osteer = map(osteer_car, -90, 90, 120, 60);
-  }
-  else if(90.0 <= psteer_car && psteer_car < 180.0){ 
+  else if(0.0 <= psteer_car && psteer_car < 180.0){ 
     osteer = 60;
   }
   Carsteer.write(osteer);  
