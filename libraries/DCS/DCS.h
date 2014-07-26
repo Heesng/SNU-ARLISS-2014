@@ -7,30 +7,56 @@
 
 #include "Arduino.h"
 
+typedef unsigned char      byte;    // byte(8-bit) is a char
+typedef unsigned short int word16;  // 16-bit word is a short int
+typedef unsigned int       word32;  // 32-bit word is an int
+
+
 class DCS{
 public:
 	DCS();
 	
-	void makePck(String lat_, String lng_, String hgt_);
+	void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_);
+
 	int readPck(String pck_);
 
-	String getPck();
-	double getLat();
-	double getLng();
-	double getHgt();
+	String getRfData();
+	String getSdData();
+
 	String getSLat();
 	String getSLng();
 	String getSHgt();
+	String getSHeading();
+	double getLat();
+	double getLng();
+	double getHgt();
+	double getHeading();
 
 private:
-	String packet;
+	word16 Checksum(String A);
+
+	/*
+	merged data from this module.
+	*/
+	String rfData;
+	String sdData;
+
+	/*
+	received data
+	*/
+	String rcvPCK;
+
+	String module;
+	String sate;
+
 	String sLat;
 	String sLng;
 	String sHgt;
+	String sHeading;
 	double lat;
 	double lng;
 	double hgt;
-	
+	double heading;
 };
 
 #endif
