@@ -2,6 +2,7 @@
 #include "GPS.h"
 
 GPS::GPS(){
+  count = 0;
   latitude = 0;
   longitude = 0;
   height = 0;
@@ -10,23 +11,26 @@ GPS::GPS(){
   sHeight = "0";
 }
 
-int GPS::renewGPS(){
+int GPS::renew(){
   
   BufIn(GPSBuf);
   int i = getPhrase(GPSBuf, GPSPhr);
-  if(i == -1) return -1;  //latest 
+  if(i == 1) return 0;  //not renewed 
   else{
 
     sLatitude = getLat(GPSPhr);
     sLongitude = getLong(GPSPhr);
     sHeight = getHigh(GPSPhr);
     StoF();
-    return 0;
+    count ++;
+    return 1; //renewed
   }
 }
 double GPS::getLat(){return latitude;}
 double GPS::getLng(){return longitude;}
 double GPS::getHgt(){return height;}
+double GPS::getDeltaH(){return deltaH;}
+
 String GPS::getSLat(){return sLatitude;}
 String GPS::getSLng(){return sLongitude;}
 String GPS::getSHgt(){return sHeight;}
@@ -54,8 +58,8 @@ int GPS::getPhrase(String & momBuf, String & sonBuf){ //Get the phrase that incl
   
   while(1){
     
-    if(i ==-1){ //In case that GPS data is not received 
-      e = -1;
+    if(i == -1){ //In the case that GPS data is not received 
+      e = 1;
       break;
     }
     else if(momBuf.substring(i+1,i+6) != AddrIndex){  
@@ -129,6 +133,7 @@ void GPS::StoF(){
   char buf0[sLatitude.length()];
   char buf1[sLongitude.length()];
   char buf2[sHeight.length()];
+  float temp;
 
   if(sLatitude.length() != 0)
   {
@@ -139,7 +144,9 @@ void GPS::StoF(){
     longitude = atof(buf1); 
 
     sHeight.toCharArray(buf2,sHeight.length());
-    height = atof(buf2); 
+    temp = height;
+    height = atof(buf2);
+    deltaH = height - temp; 
   }
   else{
     latitude = 0;

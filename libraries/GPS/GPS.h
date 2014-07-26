@@ -8,21 +8,22 @@
 
 #include "Arduino.h"
 
-
 class GPS{
 public:
 
   GPS();
-  int renewGPS();
+  int renew();
   
   double getLat();
   double getLng();
   double getHgt();
+  double getDeltaH();
+
   String getSLat();
   String getSLng();
   String getSHgt();
 
-  
+  int count;
 
 private:
   void BufIn(String &buf);  // Get GPS data from GPS module and store the data into GPSBuf
@@ -40,6 +41,7 @@ private:
   double latitude;
   double longitude;
   double height;
+  double deltaH;
   String sLatitude;
   String sLongitude;
   String sHeight;
