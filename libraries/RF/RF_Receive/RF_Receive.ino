@@ -13,8 +13,9 @@ void setup(){
 void loop(){
   String A = "";
 
-  A = rfEx.ReceivePacket();
+  int i = rfEx.receivePck(A);
   if(A != ""){
     Serial.println(A);
+    Serial.println(i);
   } 
 }

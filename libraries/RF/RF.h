@@ -8,12 +8,18 @@
 
 #include "Arduino.h"
 
+typedef unsigned char      byte;    // byte(8-bit) is a char
+typedef unsigned short int word16;  // 16-bit word is a short int
+typedef unsigned int       word32;  // 32-bit word is an int
 
 class RF{
 public:
 	RF();
-	void SendPacket(String);
-	int ReceivePacket(String & A);
+	void sendPck(String A);
+	int receivePck(String & A);
+private:
+	word16 Checksum(String A);
+///	void sendACK();
 
 };
 
