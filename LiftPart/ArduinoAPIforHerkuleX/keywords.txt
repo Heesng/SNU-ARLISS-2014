@@ -1,0 +1,56 @@
+#######################################
+# Syntax Coloring Map For HerkuleX
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+HerkuleX	KEYWORD3
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+beginSerial	KEYWORD2
+beginSerial1	KEYWORD2
+beginSerial2	KEYWORD2
+beginSerial3	KEYWORD2
+torqueOn	KEYWORD2
+torqueOff	KEYWORD2
+turn	KEYWORD2
+movePos	KEYWORD2
+moveAngle	KEYWORD2
+clear	KEYWORD2
+getTurnSpeed	KEYWORD2
+getPos	KEYWORD2
+getAngle	KEYWORD2
+getStatus	KEYWORD2
+send	KEYWORD2
+receive	KEYWORD2
+
+
+######################################
+# Instances (KEYWORD2)
+#######################################
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+HERKULEX_LED_RED	LITERAL1
+HERKULEX_LED_GREEN	LITERAL1
+HERKULEX_LED_BLUE	LITERAL1
+HERKULEX_STATUS_OK	LITERAL1
+HERKULEX_ERROR_INPUT_VOLTAGE	LITERAL1
+HERKULEX_ERROR_POS_LIMIT	LITERAL1
+HERKULEX_ERROR_TEMPERATURE_LIMIT	LITERAL1
+HERKULEX_ERROR_INVALID_PKT	LITERAL1
+HERKULEX_ERROR_OVERLOAD	LITERAL1
+HERKULEX_ERROR_DRIVER_FAULT	LITERAL1
+HERKULEX_ERROR_EEPREG_DISTORT	LITERAL1
+HERKULEX_BROADCAST_ID	LITERAL1
+
+
