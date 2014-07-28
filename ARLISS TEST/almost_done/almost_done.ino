@@ -44,7 +44,7 @@ void setup(){
 }
 
 void loop(){
-  gpsEx.renewGPS();
+  gpsEx.renew();
   //Serial.println("a");
   float lat = gpsEx.getLat()/100;
   float lng = gpsEx.getLng()/100;
@@ -56,8 +56,8 @@ void loop(){
   float heading_ = compass.heading();
   //Serial.println("d");
   go(destlat,destlong,lat,lng, heading_);
-  //Serial.println(lat,6);
-  //Serial.println(lng,6);
+  Serial.println(lat,6);
+  Serial.println(lng,6);
 //  steer(destlat,destlong,lat,lng,heading_);
   //Serial.println("e");
 }
