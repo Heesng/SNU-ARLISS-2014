@@ -56,7 +56,7 @@ void setup(){
 void loop(){
   String dataString = "";
   gpsEx.renew();
-  //Serial.println("a");
+  Serial.println("a");
   float lat = gpsEx.getLat()/100;
   float lng = gpsEx.getLng()/100;
   dataString += String((int)(lat*1000000));
@@ -64,19 +64,19 @@ void loop(){
   dataString += String((int)(lng*1000000));
   //double satheading = 0;//rf.getheading();
   //for compass sensor
-  //Serial.println("b");
+  Serial.println("b");
   compass.read();
-  //Serial.println("c");
+  Serial.println("c");
   float heading_ = compass.heading();
   dataString += "	";
   dataString += String((int)(heading_*10));
-  //Serial.println("d");
+  Serial.println("d");
   float sheading_ = 0;
   go(destlat,destlong,lat,lng, heading_, sheading_);
   //Serial.println(lat,6);
   //Serial.println(lng,6);
   //steer(destlat,destlong,lat,lng,heading_);
-  //Serial.println("e");
+  Serial.println("e");
   File dataFile = SD.open("datalog.txt", FILE_WRITE);
 
   // if the file is available, write to it:
@@ -88,7 +88,9 @@ void loop(){
   // if the file isn't open, pop up an error:
   else {
     Serial.println("error opening datalog.txt");
-  } 
+  }
+  dataString += "	";
+  dataString += String((int)osteer);
 }
 
 void go(float destlat,float destlong,float lat,float lng,float heading_, float sheading_){
