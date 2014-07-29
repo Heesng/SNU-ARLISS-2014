@@ -25,13 +25,18 @@ float steer_car,dsteer_car,isteer_car = 0, steer_car0;
 float Pgain = 3, Dgain, Igain;
 float asteer_car,adsteer_car,aisteer_car = 0, asteer_car0;
 float aPgain = 3, aDgain, aIgain;
+float osteer = 0;
+
 const int chipSelect = 53;
-String dataString = "";
 
 void setup(){
   Serial.begin(9600);
   Serial2.begin(9600);
   //for compass sensor
+  pinMode(10, OUTPUT);
+  if (!SD.begin(chipSelect)) {
+    return;
+  } 
   Wire.begin();
   compass.init();
   compass.enableDefault();  
@@ -49,6 +54,7 @@ void setup(){
 }
 
 void loop(){
+  String dataString = "";
   gpsEx.renew();
   //Serial.println("a");
   float lat = gpsEx.getLat()/100;
@@ -146,7 +152,6 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   isteer_car = isteer_car + dsteer_car;
   
   float osteer_car = Pgain*psteer_car + Dgain*dsteer_car + Igain*isteer_car;
-  float osteer = 0;
 
   if (-180.0 <= psteer_car && psteer_car < -90.0){
     osteer = 120;
@@ -167,7 +172,7 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   }
   Carsteer.write(osteer);
   Serial.println(osteer);
-  dataString += String((int)osteer);
+  //dataString += String((int)osteer);
 }
 
 void vel(int velocity){
