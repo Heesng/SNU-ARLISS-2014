@@ -15,7 +15,7 @@ void setup()
   Serial.begin(9600);    // Open serial communications
   // Open SoftwareSerial with 57600 baudrate
   // To set up HerkuleX servo baudrate, See. the library manual
-  HerkuleX.begin(115200, RX, TX);  
+  HerkuleX.begin(57600, RX, TX);  
   delay(10);
   // Torque ON
   HerkuleX.torqueOn(MOTORID);
@@ -36,7 +36,7 @@ void loop() // run over and over
     if (incomingbyte == '1') {
       Serial.println("Move angle");
       // Move HerkuleX to -30 degree by 112ms, Turn blue LED on.
-      HerkuleX.moveAngle(MOTORID, 90, 10, HERKULEX_LED_BLUE);  
+      HerkuleX.moveAngle(MOTORID, -30, 10, HERKULEX_LED_BLUE);  
     }
     
     if (incomingbyte == 'a') {
