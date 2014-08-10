@@ -19,10 +19,10 @@ GPS gpsEx;
 Servo Carsteer;
 Servo Carspeed;
 LSM303 compass;
-float destlat = 37.275272;
-float destlong = 126.569160;
+float destlat = 37.279319;
+float destlong = 126.570091;
 float steer_car,dsteer_car,isteer_car = 0, steer_car0;
-float Pgain = 3, Dgain, Igain;
+float Pgain = 1, Dgain, Igain;
 float osteer;
 
 const int chipSelect = 53;
@@ -53,9 +53,9 @@ void setup(){
 
 void loop(){
   String dataString = "";
-  while(gpsEx.getLat()==0){
+  //while(gpsEx.getLat()==0){
     gpsEx.renew();
-  }
+  //}
   //Serial.println("a");
   float lat = gpsEx.getLat()/100;
   float lng = gpsEx.getLng()/100;
@@ -94,7 +94,7 @@ void loop(){
 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
   if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) > 0.00009*0.00009){
-    vel(80);
+    vel(90);
     steer(destlat,destlong,lat,lng,heading_);
   }
   else{
@@ -124,11 +124,11 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
     angle = 270 - angle;
   }
   
-  //Serial.println(angle);
+  Serial.println(angle);
   
   steer_car = angle - heading_;
   
-  //Serial.println(steer_car);  
+  Serial.println(steer_car);  
   
   float psteer_car = steer_car;
   
@@ -147,7 +147,7 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   float osteer_car = Pgain*psteer_car + Dgain*dsteer_car + Igain*isteer_car;
 
   if (-180.0 <= psteer_car && psteer_car < -90.0){
-    osteer = 60;
+    osteer = 120;
   }
   else if(-90.0 <= psteer_car && psteer_car <= 90.0){
     //osteer = map(psteer_car, 270, 360, 120, 90);// (-1)*(3*steer)/9 + 210;
@@ -158,10 +158,10 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
     else if(osteer_car>90){
       osteer_car = 90;
     }
-    osteer = map(osteer_car, -90, 90, 60, 120);
+    osteer = map(osteer_car, -90, 90, 120, 60);
   }
   else if(90.0 <= psteer_car && psteer_car < 180.0){ 
-    osteer = 120;
+    osteer = 60;
   }
   Carsteer.write(osteer);
 //  delay(1000);
@@ -186,7 +186,7 @@ void vel(int velocity){
     currenttime = millis();
   }
   while(currenttime<ttime){
-    Carspeed.write(95);
+    Carspeed.write(95 );
     currenttime = millis();
   }
   while(currenttime<etime){
