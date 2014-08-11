@@ -4,6 +4,8 @@
 #include <Math.h>
 #include <Servo.h>
 #include <SD.h>
+#include<DCS.h>
+#include<RF.h>
 
 /*
 Car functions
@@ -14,6 +16,8 @@ void go(float a,float b,float c,float d,float e);
 /*
 Car Variables
 */
+DCS dcs;
+RF rf;
 GPS gpsEx;
 Servo Carsteer;
 LSM303 compass;
@@ -23,11 +27,18 @@ float steer_car,dsteer_car,isteer_car = 0, steer_car0;
 float Pgain = 1, Dgain, Igain;
 float osteer;
 int motor = 2;
+int r=0,g,d;
+String state = "";
+String rcvPck = "";
+char x [6];
 
+const String module = "R";
 const int chipSelect = 53;
 
 void setup(){
+  state = "S";
   Serial.begin(9600);
+  Serial1.begin(9600);
   Serial2.begin(9600);
   //for compass sensor
   pinMode(10, OUTPUT);
@@ -59,7 +70,7 @@ void setup(){
 void loop(){
   String dataString = "";
   //while(gpsEx.getLat()==0){
-    gpsEx.renew();
+  g = gpsEx.renew();
   //}
   //Serial.println("a");
   float lat = gpsEx.getLat()/100;
@@ -73,6 +84,7 @@ void loop(){
   compass.read();
   //Serial.println("c");
   float heading_ = compass.heading((LSM303::vector<int>){0,1,0});
+  dtostrf(heading_,3,1,x);
   dataString += "	";
   dataString += String((int)(heading_*10));
   //Serial.println("d");
@@ -90,6 +102,14 @@ void loop(){
     dataFile.println(dataString);
     dataFile.close();
     // print to the serial port too:
+  }
+  if(g==1){
+    dcs.mergeData(module,state,gpsEx.getSLat(),gpsEx.getSLng(),gpsEx.getSHgt(),x);
+    rf.sendPck(dcs.getRfData());
+  }
+  r = rf.receivePck(rcvPck);
+  if(r==0){
+    dcs.readPck(rcvPck);
   }  
   // if the file isn't open, pop up an error:
 //  else {
