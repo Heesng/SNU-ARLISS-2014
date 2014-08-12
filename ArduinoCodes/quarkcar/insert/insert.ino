@@ -24,20 +24,29 @@ void setup(){
 void loop(){
   if(Serial.available()>0){
     rsangle = Serial.read();
+    if(rsangle<-45||rsangle>45){
+      Serial.println("Wrong range");
+    }
     delay(10);
   }
   insert(rsangle);
 }
 
-void insert(rsangle){
+void insert(float rsangle){
   if(-10<rsangle&&rsangle<10){
     analogWrite(motor, 190);
   }
   else if(-45<rsangle&&rsangle<10){
-    
+    Carsteer.write(60);
+    analogWrite(motor, 180);
+    Carsteer.write(120);
+    analogWrite(motor, 180);
   }
   else if(10<rsangle&&rsangle<45){
-    
+    Carsteer.write(120);
+    analogWrite(motor, 180);
+    Carsteer.write(60);
+    analogWrite(motor, 180);    
   }
 }
 
