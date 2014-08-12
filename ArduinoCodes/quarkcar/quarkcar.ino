@@ -9,7 +9,9 @@
 Car functions
 */
 void steer(float a,float b,float c,float d,float e);
-void go(float a,float b,float c,float d,float e);
+void go(float a,float b,float c,float d,float e,float f);
+void insert();
+float rsangle();
 
 /*
 Car Variables
@@ -22,6 +24,7 @@ float destlong = 126.570091;
 float steer_car,dsteer_car,isteer_car = 0, steer_car0;
 float Pgain = 1, Dgain, Igain;
 float osteer;
+int tactswitch = 0;
 int motor = 2;
 
 const int chipSelect = 53;
@@ -57,6 +60,7 @@ void setup(){
 }
 
 void loop(){
+  float sheading_ = 0;
   String dataString = "";
   //while(gpsEx.getLat()==0){
     gpsEx.renew();
@@ -77,7 +81,7 @@ void loop(){
   dataString += String((int)(heading_*10));
   //Serial.println("d");
   //float sheading_ = 0;
-  go(destlat,destlong,lat,lng, heading_);
+  go(destlat,destlong,lat,lng, heading_, sheading_);
   dataString += "	";
   dataString += String((int)osteer);
   Serial.println(lat,6);
@@ -98,14 +102,26 @@ void loop(){
 }
 //motor neutral = 186~188
 //motor possible range = 
-void go(float destlat,float destlong,float lat,float lng,float heading_){
-  if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) > 0.00009*0.00009){
+
+void go(float destlat,float destlong,float lat,float lng,float heading_, float sheading_){
+  float semidestlat = destlat - 0.0009*sin(sheading_);
+  float semidestlong = destlong - 0.0009*cos(sheading_);
+  
+  if(((destlat - lat)*(destlat - lat) + (destlong - lng)*(destlong - lng)) < ((semidestlat - lat)*(semidestlat - lat) + (semidestlong - lng)*(semidestlong - lng))){
+    semidestlat = destlat + 0.0009*sin(sheading_);
+    semidestlong = destlong + 0.0009*cos(sheading_);
+  }
+  
+  if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) > 0.0009*0.0009){
+    analogWrite(motor, 190);
+    steer(semidestlat,semidestlong,lat,lng,heading_);
+  }
+  else if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) > 0.00009*0.00009){
     analogWrite(motor, 190);
     steer(destlat,destlong,lat,lng,heading_);
   }
   else{
-    analogWrite(motor, 187);
-    //steer(destlat,destlong,lat,lng, heading_);
+    insert();
   }
 }
 
@@ -175,3 +191,14 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   //dataString += String((int)osteer);
 }
 
+void insert(){
+  while(tactswitch){
+      if(-10<rsangle()&&rsangle()<10){
+        analogWrite(motor,190);
+      }
+  }
+}
+
+float rsangle(){
+  return 0;
+}
