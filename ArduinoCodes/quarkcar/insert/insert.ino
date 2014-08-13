@@ -7,6 +7,7 @@ float rsangle = 0;
 int motor = 2;
 
 void setup(){
+  delay(3000);
   Serial.begin(9600);
   Carsteer.attach(3);
   pinMode(2,OUTPUT);
@@ -22,31 +23,38 @@ void setup(){
 }
 
 void loop(){
-  if(Serial.available()>0){
-    rsangle = Serial.read();
-    if(rsangle<-45||rsangle>45){
-      Serial.println("Wrong range");
-    }
-    delay(10);
+  analogWrite(motor, 186);
+  delay(2000);
+}
+
+void serialEvent(){
+  if(Serial.available()){
+      rsangle = Serial.parseInt();
+      Serial.print(rsangle);      
   }
   insert(rsangle);
 }
 
 void insert(float rsangle){
   if(-10<rsangle&&rsangle<10){
-    analogWrite(motor, 190);
+    analogWrite(motor, 210);
+    delay(2000);
   }
-  else if(-45<rsangle&&rsangle<10){
+  else if(-45<rsangle&&rsangle<-10){
     Carsteer.write(60);
-    analogWrite(motor, 180);
+    analogWrite(motor, 150);
+    delay(1000);
     Carsteer.write(120);
-    analogWrite(motor, 180);
+    analogWrite(motor, 150);
+    delay(1000);
   }
   else if(10<rsangle&&rsangle<45){
     Carsteer.write(120);
-    analogWrite(motor, 180);
+    analogWrite(motor, 150);    
+    delay(1000);
     Carsteer.write(60);
-    analogWrite(motor, 180);    
+    analogWrite(motor, 160);
+    delay(1000);    
   }
 }
 
