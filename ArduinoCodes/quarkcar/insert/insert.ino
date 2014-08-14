@@ -23,6 +23,7 @@ void setup(){
 }
 
 void loop(){
+  Carsteer.write(90);
   analogWrite(motor, 186);
   delay(2000);
 }
@@ -37,23 +38,23 @@ void serialEvent(){
 
 void insert(float rsangle){
   if(-10<rsangle&&rsangle<10){
-    analogWrite(motor, 210);
+    analogWrite(motor, 200);
     delay(2000);
   }
   else if(-45<rsangle&&rsangle<-10){
     Carsteer.write(60);
-    analogWrite(motor, 150);
+    analogWrite(motor, 170);
     delay(1000);
     Carsteer.write(120);
-    analogWrite(motor, 150);
+    analogWrite(motor, 170);
     delay(1000);
   }
   else if(10<rsangle&&rsangle<45){
     Carsteer.write(120);
-    analogWrite(motor, 150);    
+    analogWrite(motor, 170);    
     delay(1000);
     Carsteer.write(60);
-    analogWrite(motor, 160);
+    analogWrite(motor, 170);
     delay(1000);    
   }
 }
