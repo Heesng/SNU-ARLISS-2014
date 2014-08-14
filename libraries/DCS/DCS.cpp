@@ -19,7 +19,7 @@ int DCS::readPck(String pck_){
   module = pck_.substring(0,i-1);
 
   int j = pck_.indexOf(comma,i+1);
-  sate = pck_.substring(i+1,j-1);
+  state = pck_.substring(i+1,j-1);
 
   i = pck_.indexOf(comma,j+1);
   sLat = pck_.substring(j+1,i-1);
@@ -87,6 +87,10 @@ word16 DCS::Checksum(String A){
 
 String DCS::getRfData(){return rfData;}
 String DCS::getSdData(){return sdData;}
+
+String DCS::getModule(){return module;}
+String DCS::getState(){return state;}
+
 String DCS::getSLat(){return sLat;}
 String DCS::getSLng(){return sLng;}
 String DCS::getSHgt(){return sHgt;}

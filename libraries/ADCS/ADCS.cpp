@@ -2,6 +2,7 @@
 #include "ADCS.h"
 
 ADCS::ADCS(){
+	/*
 	pwmPin1 = 2;
 	enablePin1 = 4;
 	dirPin1 =3;
@@ -9,6 +10,14 @@ ADCS::ADCS(){
 	pwmPin2 = 5;
 	enablePin2 = 7;
 	dirPin2 = 6;
+	*/
+	pwmPin1 = 5;
+	enablePin1 = 7;
+	dirPin1 =6;
+
+	pwmPin2 =2;
+	enablePin2 = 4;
+	dirPin2 = 3;
 
 	XAccPin = 0;
 	YAccPin = 1;
@@ -41,6 +50,8 @@ int ADCS::renew(){
 	theta = (180/3.14)*atan2(Acc[2], Acc[1])-0.5;
 	dtheta = theta - theta0;
 	theta0 = theta;
+	Serial.println(gettheta());
+
 	if(theta < 95 && theta > 75) return 0;	//when sensor is erect
 	else return 1;
 }
@@ -105,15 +116,8 @@ int ADCS::reelPara(){
 		digitalWrite(dirPin1, LOW);
 	}
 
-	/*
-	for(int i =0; i<255; i++){
-		analogWrite(pwmPin1, i);
-		delay(40);
-	}*/
-
-
 		analogWrite(pwmPin1, 250);
-		delay(8000);
+		delay(15000);
 		digitalWrite(enablePin1, HIGH);
 
 		return 1;

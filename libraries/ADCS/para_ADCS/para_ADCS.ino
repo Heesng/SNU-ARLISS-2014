@@ -11,6 +11,9 @@ void setup(){
 }
 
 void loop(){
+	if(i==0){
+		i = adcs.reelPara();
+	}
 	j = adcs.renew();
 	if(j==1){
 		adcs.control();

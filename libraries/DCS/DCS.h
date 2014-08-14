@@ -23,6 +23,10 @@ public:
 	String getRfData();
 	String getSdData();
 
+
+	String getModule();
+	String getState();
+
 	String getSLat();
 	String getSLng();
 	String getSHgt();
@@ -47,7 +51,7 @@ private:
 	String rcvPCK;
 
 	String module;
-	String sate;
+	String state;
 
 	String sLat;
 	String sLng;

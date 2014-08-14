@@ -5,8 +5,8 @@ void setup()
 }
 void loop()
 {    
-    char ch ;
-    while(Serial2.available())
+    char ch;
+    if(Serial2.available())
       {
         ch = Serial2.read();
         Serial.write(ch);

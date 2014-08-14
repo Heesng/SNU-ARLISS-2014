@@ -23,6 +23,7 @@ void RF::sendPck(String A)
 
 int RF::receivePck(String & A)
 {
+  int i = 0;
 	char c;
   while(Serial1.available()>10){
     c = Serial1.read();delay(5);
@@ -32,8 +33,9 @@ int RF::receivePck(String & A)
       	c = Serial1.read();delay(5);
         if(c == 'U'){delay(5);
           c = Serial1.read();delay(5);
-          while(c != '\n')
+          while(c != '\n' && i<200)
           {
+            i++;
             A += c;delay(5);
             c = Serial1.read();delay(5);
           }
@@ -49,18 +51,6 @@ int RF::receivePck(String & A)
 
           cs_[0] = chescksum & 0xFF;
           cs_[1] = (chescksum >> 8) & 0xFF;
-
-          Serial.write(cs[0]);
-          Serial.write('\t');
-
-          Serial.write(cs[1]);
-          Serial.write('\t');
-
-          Serial.write(cs_[0]);
-          Serial.write('\t');
-
-          Serial.write(cs_[1]);
-          Serial.write('\n');
 
           if(cs[0] == cs_[0] && cs[1]==cs_[1]) return 0; //received without noise
           else return -1; //received with noise

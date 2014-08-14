@@ -1,22 +1,28 @@
+#include <ADCS.h>
+#include <Compass.h>
 #include <GPS.h>
 #include <RF.h>
 #include <SD.h>
 #include <DCS.h>
 #include <math.h>
+#include <Wire.h>
 
+ADCS adcs;
+Compass comp;
 DCS dcs;
 GPS gps;
 RF rf;
 
-const String module = "R";
-const int chipSelect = 9; //SD card chip select
+const String module = "S";
+const int chipSelect = 9;
+const int ledPin = 22;
 
 void sdWrite(String dataString);
 float distance(GPS gps_, DCS dcs_);
 
-int d,g=0, r=0; //dcs,gps,rfrcv
-int D=0; //, Docking
-float dist=1000;
+int a,d,g=0, r=0; //adcs,dcs,gps,rfrcv
+int P=0, D=0; //Parachute, Docking
+float dHgt=0, dist=1000;
 String state = "";
 String rcvPck = "";
 
@@ -25,53 +31,44 @@ void setup(){
 	Serial.begin(9600);
 	Serial1.begin(1200);
 	Serial2.begin(9600);
+	Wire.begin();
+	pinMode(ledPin, OUTPUT);
+
+
+	digitalWrite(ledPin, HIGH);
+	delay(10000);
 }
 
 void loop(){
 
+	a = adcs.renew();
+	comp.renew();
 
 	g = gps.renew();
 	if(g==1){
 		dcs.mergeData(module,state,gps.getSLat(),gps.getSLng(),gps.getSHgt(),comp.getSHeading());
-		sdWrite(dcs.getSdData());
-		rf.sendPck(dcs.getRfData());
-	}
-	r = rf.receivePck(rcvPck);
-	if(r==0){
-		dcs.readPck(rcvPck);
-		dist = distance(gps,dcs);
 	}
 
-/*
-use dcs functions dcs.function();
+	dHgt = gps.getDeltaH();
 
- 	String getSLat();
-	String getSLng();
-	String getSHgt();
-	String getSHeading();
-	double getLat();
-	double getLng();
-	double getHgt();
-	double getHeading();
-
-*/
-
+	
+		state = "L";
+		if(P==0){	//conduct only once!!
+			adcs.reelPara();
+			P=1;
+		}
+		if(a==1) adcs.control();
+		if(g==1){
+			rf.sendPck(dcs.getRfData());
+		}
+		r = rf.receivePck(rcvPck);
+		if(r==0){
+			dcs.readPck(rcvPck);
+			dist = distance(gps,dcs);
+		}
+	
 }
 
-
-
-void sdWrite(String dataString){
-	File dataFile = SD.open("datalog.txt", FILE_WRITE);
-
- 	 // if the file is available, write to it:
- 	 if(dataFile){
- 	 	dataFile.println(dataString);
- 	 	dataFile.close();
-
-    	// print to the serial port too:
-    	Serial.println(dataString);
-    }
-}
 
 float distance(GPS gps_, DCS dcs_){
 	float lat1 = gps_.getLat();

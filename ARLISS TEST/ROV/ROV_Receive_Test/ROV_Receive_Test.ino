@@ -3,10 +3,15 @@
 #include <SD.h>
 #include <DCS.h>
 #include <math.h>
+#include <LSM303.h>
+#include <Wire.h>
+
 
 DCS dcs;
 GPS gps;
 RF rf;
+LSM303 compass;
+
 
 const String module = "R";
 const int chipSelect = 9; //SD card chip select
@@ -19,8 +24,20 @@ int D=0; //, Docking
 float dist=1000;
 String state = "";
 String rcvPck = "";
+char Buffer[5];
+float heading_;
+String sHeading;
+
 
 void setup(){
+      compass.init();
+    compass.enableDefault();  
+    compass.m_min = (LSM303::vector<int16_t>){
+    -703,-737, -746  };
+  compass.m_max = (LSM303::vector<int16_t>){
+    +695, +461, +635  };
+
+  
 	state = "S";
 	Serial.begin(9600);
 	Serial1.begin(1200);
@@ -31,15 +48,23 @@ void loop(){
 
 
 	g = gps.renew();
+        compass.read();
+
+        heading_ = compass.heading();
+        sHeading = dtostrf(heading_, 1, 4, Buffer);
 	if(g==1){
-		dcs.mergeData(module,state,gps.getSLat(),gps.getSLng(),gps.getSHgt(),comp.getSHeading());
-		sdWrite(dcs.getSdData());
-		rf.sendPck(dcs.getRfData());
+		dcs.mergeData(module,state,gps.getSLat(),gps.getSLng(),gps.getSHgt(),sHeading);
+		Serial.println("Data from ROV");
+		Serial.println(dcs.getSdData());
+		Serial.println(dcs.getRfData());
 	}
 	r = rf.receivePck(rcvPck);
 	if(r==0){
+		Serial.println(rcvPck);
 		dcs.readPck(rcvPck);
 		dist = distance(gps,dcs);
+		Serial.print("Distance: ");
+		Serial.println(dist);
 	}
 
 /*
