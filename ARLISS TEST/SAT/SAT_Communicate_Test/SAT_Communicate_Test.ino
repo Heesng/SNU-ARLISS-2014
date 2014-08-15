@@ -16,12 +16,13 @@ RF rf;
 const String module = "S";
 const int ledPin = 22;
 
-void sdWrite(String dataString);
-float distance(GPS gps_, DCS dcs_);
+void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_);
 
 int a,d,g=0, r=0; //adcs,dcs,gps,rfrcv
 String state = "";
 String rcvPck = "";
+String rfData = "";
+String sdData = "";
 
 void setup(){
 	state = "S";
@@ -34,8 +35,8 @@ void setup(){
 void loop(){
 
 	comp.renew();
-	dcs.mergeData(module,state,"1234.5678","11234.5678","20",comp.getSHeading());
-	rf.sendPck(dcs.getRfData());
+	mergeData(module,state,"1234.5678","11234.5678","20",comp.getSHeading());
+	rf.sendPck(rfData);
 	r = rf.receivePck(rcvPck);
 	if(r==0){
 		dcs.readPck(rcvPck);
@@ -52,4 +53,11 @@ void loop(){
 		Serial.print("heading: ");
 		Serial.println(dcs.getSHeading());
 	}
+}
+
+
+void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_){
+
+  rfData = module_ +"," +state_ +"," + slat_ +"," + slng_ +"," + shgt_ +"," + sheading_;
+  sdData = module_ +"\t"+state_ +"\t"+ slat_ +"\t"+ slng_ +"\t"+ shgt_ +"\t"+ sheading_;
 }
