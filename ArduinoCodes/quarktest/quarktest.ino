@@ -1,4 +1,4 @@
-int motor = 2;           // the pin that the LED is attached to
+ int motor = 2;           // the pin that the LED is attached to
 
 // the setup routine runs once when you press reset:
 void setup()  { 
@@ -15,19 +15,16 @@ void setup()  {
     analogWrite(motor, i);
     delay(10);
   }
-  analogWrite(motor, 170);
+  analogWrite(motor, 173);
   delay(1000);
   analogWrite(motor, 190);
   delay(1000);
   
 } 
-//186~188 ->neutral
+//179~184 ->neutral
 // the loop routine runs over and over again forever:
 void loop()  {
     analogWrite(motor, 190);
-    delay(1000);
-    analogWrite(motor, 180);
-    delay(1000);
     //analogWrite(motor, 230);
     //delay(10);               
 }
