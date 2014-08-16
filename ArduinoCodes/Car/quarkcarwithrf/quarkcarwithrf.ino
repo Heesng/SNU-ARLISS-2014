@@ -36,6 +36,10 @@ float osteer;
 int motor = 2;
 int r=0,g,d;
 
+String sHeading;
+char Buffer[5];
+
+
 String state = "";
 String rcvPck = "";
 
@@ -47,26 +51,33 @@ String rstate;//Received state
 String rslat;//Received String latitude
 String rslng;//Received String longitude
 String rshgt;//Received String height
-String rsheading;//Received String latitude
+String rsheading;//Received String heading
 
-float rlat = 0;
-float rlng = 0;
-float rhgt = 0;
-float rheading = 0;
+float rlat = 0;//Received latitude
+float rlng = 0;//Received longitude
+float rhgt = 0;//Received height
+float rheading = 0;//Received heading
 
-const String module = "R";
-const int chipSelect = 53;
+String module = "R";
+int chipSelect = 53;
 
 void setup(){
   state = "S";
   Serial.begin(9600);
   Serial1.begin(9600);
   Serial2.begin(9600);
-  //for compass sensor
+
+  /*
+  SDcard setting
+  */
   pinMode(10, OUTPUT);
   if (!SD.begin(chipSelect)) {
     return;
   } 
+
+  /*
+  Compass setting
+  */
   Wire.begin();
   compass.init();
   compass.enableDefault();  
@@ -74,6 +85,10 @@ void setup(){
     -703,-737, -746  };
     compass.m_max = (LSM303::vector<int16_t>){
       +695, +461, +635  };
+
+  /*
+  Driving setting
+  */
   //for steer
   Carsteer.attach(3);
   //for speed
@@ -106,7 +121,7 @@ void loop(){
   compass.read();
   //Serial.println("c");
   float heading_ = compass.heading((LSM303::vector<int>){0,1,0});
-  dtostrf(heading_,3,1,sHeading);
+  sHeading = dtostrf(heading_,1,1,Buffer);
   dataString += "	";
   dataString += String((int)(heading_*10));
   //Serial.println("d");
@@ -134,9 +149,7 @@ void loop(){
     rf.sendPck(rfData);
   }
 
-  /*
-  RF receive code
-  */
+
   r = rf.receivePck(rcvPck);
   if(r==0){
     readPck(rcvPck);
