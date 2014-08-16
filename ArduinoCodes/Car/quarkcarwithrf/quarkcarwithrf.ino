@@ -4,8 +4,7 @@
 #include <Math.h>
 #include <Servo.h>
 #include <SD.h>
-#include<DCS.h>
-#include<RF.h>
+#include <RF.h>
 
 /*
 Car functions
@@ -13,10 +12,18 @@ Car functions
 void steer(float a,float b,float c,float d,float e);
 void go(float a,float b,float c,float d,float e);
 
+
+/*
+Data process functioncs
+*/
+void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_);
+int readPck(String pck_);
+
+
+
 /*
 Car Variables
 */
-DCS dcs;
 RF rf;
 GPS gpsEx;
 Servo Carsteer;
@@ -28,9 +35,24 @@ float Pgain = 1, Dgain, Igain;
 float osteer;
 int motor = 2;
 int r=0,g,d;
+
 String state = "";
 String rcvPck = "";
-char x [6];
+
+String rfData = "";
+String sdData = "";
+
+String rmodule;//Received module
+String rstate;//Received state
+String rslat;//Received String latitude
+String rslng;//Received String longitude
+String rshgt;//Received String height
+String rsheading;//Received String latitude
+
+float rlat = 0;
+float rlng = 0;
+float rhgt = 0;
+float rheading = 0;
 
 const String module = "R";
 const int chipSelect = 53;
@@ -50,8 +72,8 @@ void setup(){
   compass.enableDefault();  
   compass.m_min = (LSM303::vector<int16_t>){
     -703,-737, -746  };
-  compass.m_max = (LSM303::vector<int16_t>){
-    +695, +461, +635  };
+    compass.m_max = (LSM303::vector<int16_t>){
+      +695, +461, +635  };
   //for steer
   Carsteer.attach(3);
   //for speed
@@ -70,7 +92,7 @@ void setup(){
 void loop(){
   String dataString = "";
   //while(gpsEx.getLat()==0){
-  g = gpsEx.renew();
+    g = gpsEx.renew();
   //}
   //Serial.println("a");
   float lat = gpsEx.getLat()/100;
@@ -84,7 +106,7 @@ void loop(){
   compass.read();
   //Serial.println("c");
   float heading_ = compass.heading((LSM303::vector<int>){0,1,0});
-  dtostrf(heading_,3,1,x);
+  dtostrf(heading_,3,1,sHeading);
   dataString += "	";
   dataString += String((int)(heading_*10));
   //Serial.println("d");
@@ -103,15 +125,34 @@ void loop(){
     dataFile.close();
     // print to the serial port too:
   }
+
+  /*
+  RF sending code
+  */
   if(g==1){
-    dcs.mergeData(module,state,gpsEx.getSLat(),gpsEx.getSLng(),gpsEx.getSHgt(),x);
-    rf.sendPck(dcs.getRfData());
+    mergeData(module,state,gpsEx.getSLat(),gpsEx.getSLng(),gpsEx.getSHgt(),sHeading);
+    rf.sendPck(rfData);
   }
+
+  /*
+  RF receive code
+  */
   r = rf.receivePck(rcvPck);
   if(r==0){
-    dcs.readPck(rcvPck);
-  }  
-  // if the file isn't open, pop up an error:
+    readPck(rcvPck);
+    Serial.print("module: ");
+    Serial.println(rmodule);
+    Serial.print("state: ");
+    Serial.println(rstate);
+    Serial.print("latitude: ");
+    Serial.println(rslat);
+    Serial.print("longitude: ");
+    Serial.println(rslng);
+    Serial.print("height: ");
+    Serial.println(rshgt);
+    Serial.print("heading: ");
+    Serial.println(rsheading);
+  }  // if the file isn't open, pop up an error:
 //  else {
 //    Serial.println("error opening datalog.txt");
 //  }
@@ -190,8 +231,62 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
     osteer = 60;
   }
   Carsteer.write(osteer);
-//  delay(1000);
- // Serial.println(osteer);
+  //delay(1000);
+  //Serial.println(osteer);
   //dataString += String((int)osteer);
 }
 
+void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_){
+
+  rfData = module_ +"," +state_ +"," + slat_ +"," + slng_ +"," + shgt_ +"," + sheading_;
+  sdData = module_ +"\t"+state_ +"\t"+ slat_ +"\t"+ slng_ +"\t"+ shgt_ +"\t"+ sheading_;
+}
+
+int readPck(String pck_){
+
+  char comma = ',';
+
+  int i = pck_.indexOf(comma);
+  rmodule = pck_.substring(0,i-1);
+
+  int j = pck_.indexOf(comma,i+1);
+  rstate = pck_.substring(i+1,j-1);
+
+  i = pck_.indexOf(comma,j+1);
+  rslat = pck_.substring(j+1,i-1);
+
+  j= pck_.indexOf(comma,i+1);
+  rslng = pck_.substring(i+1,j-1);
+
+  i = pck_.indexOf(comma,j+1);
+  rshgt = pck_.substring(j+1,i-1);
+
+  j= pck_.indexOf(comma,i+1);
+  rsheading = pck_.substring(i+1,j-1);
+
+  char buf0[rslat.length()];
+  char buf1[rslng.length()];
+  char buf2[rshgt.length()];
+  char buf3[rsheading.length()];
+
+  if(rslat.length() != 0)
+  {
+    rslat.toCharArray(buf0,rslat.length());
+    rlat = atof(buf0); 
+    rslng.toCharArray(buf1,rslng.length());
+    rlng = atof(buf1); 
+    rshgt.toCharArray(buf2,rshgt.length());
+    rhgt = atof(buf2);
+    rsheading.toCharArray(buf2,rsheading.length());
+    rheading = atof(buf3);
+
+    return 0;
+  }
+
+  else{
+    rlat = 0;
+    rlng = 0;
+    rhgt = 0;
+    return -1;
+  }
+}
