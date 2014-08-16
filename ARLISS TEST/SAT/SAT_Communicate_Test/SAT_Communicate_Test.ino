@@ -1,28 +1,25 @@
 #include <ADCS.h>
-#include <Compass.h>
 #include <GPS.h>
 #include <RF.h>
 #include <SD.h>
-//#include <DCS.h>
 #include <math.h> 
 #include <Wire.h>
 
 ADCS adcs;
-Compass comp;
 GPS gps;
 RF rf;
 
-const String module = "S";
-const int ledPin = 22;
+String module = "S";
+int ledPin = 22;
 
 void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_);
 int readPck(String pck_);
+void compassRenew();
 
 int a,d,g=0, r=0; //adcs,dcs,gps,rfrcv
 
 String state = "";
 String rcvPck = "";
-
 
 String rfData = "";
 String sdData = "";
@@ -32,12 +29,24 @@ String rstate;//Received state
 String rslat;//Received String latitude
 String rslng;//Received String longitude
 String rshgt;//Received String height
-String rsheading;//Received String latitude
+String rsheading;//Received String heading
 
-float rlat = 0;
-float rlng = 0;
-float rhgt = 0;
-float rheading = 0;
+float rlat = 0;//Received latitude
+float rlng = 0;//Received longitude
+float rhgt = 0;//Received height
+float rheading = 0;//Received heading
+
+
+int SlaveAddress = 0x42;
+int ReadAddress = 0x41; //"A" in hex, A command is: 
+
+int headingValue;
+float headingSum;
+float headingInt;
+
+String sHeading;
+char Buffer[5];
+
 
 
 void setup(){
@@ -45,35 +54,53 @@ void setup(){
 	Serial.begin(9600);
 	Serial1.begin(1200);
 	Serial2.begin(9600);
-	Wire.begin();
+
+  SlaveAddress = SlaveAddress >> 1; // I know 0x42 is less than 127, but this is still required
+
+  Wire.begin();
 }
 
 void loop(){
 
-	comp.renew();
-	mergeData(module,state,"1234.5678","11234.5678","20",comp.getSHeading());
-	rf.sendPck(rfData);
-	r = rf.receivePck(rcvPck);
+  /*
+  Compass renew
+  */
+  compassRenew();
 
-	if(r==0){
-		readPck(rcvPck);
-		Serial.print("module: ");
-		Serial.println(rmodule);
-		Serial.print("state: ");
-		Serial.println(rstate);
-		Serial.print("latitude: ");
-		Serial.println(rslat);
-		Serial.print("longitude: ");
-		Serial.println(rslng);
-		Serial.print("height: ");
-		Serial.println(rshgt);
-		Serial.print("heading: ");
-		Serial.println(rsheading);
-	}
+  /*
+  RF sending code
+  */
+  mergeData(module,state,"1234.5678","11234.5678","20",sHeading);
+  Serial.println(rfData);
+  Serial.println(sdData);
+  rf.sendPck(rfData);
+
+  /*
+  RF receive code
+  */
+  r = rf.receivePck(rcvPck);
+  if(r==0){
+    readPck(rcvPck);
+    Serial.print("module: ");
+    Serial.println(rmodule);
+    Serial.print("state: ");
+    Serial.println(rstate);
+    Serial.print("latitude: ");
+    Serial.println(rslat);
+    Serial.print("longitude: ");
+    Serial.println(rslng);
+    Serial.print("height: ");
+    Serial.println(rshgt);
+    Serial.print("heading: ");
+    Serial.println(rsheading);
+  }
+
+  delay(1000);
 }
 
 
 void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_){
+
 
   rfData = module_ +"," +state_ +"," + slat_ +"," + slng_ +"," + shgt_ +"," + sheading_;
   sdData = module_ +"\t"+state_ +"\t"+ slat_ +"\t"+ slng_ +"\t"+ shgt_ +"\t"+ sheading_;
@@ -126,4 +153,31 @@ int readPck(String pck_){
     rhgt = 0;
     return -1;
   }
+}
+
+void compassRenew(){
+    Wire.beginTransmission(SlaveAddress);
+  Wire.write(ReadAddress);              // The "Get Data" command
+  Wire.endTransmission();
+
+  //time delays required by HMC6352 upon receipt of the command
+  //Get Data. Compensate and Calculate New Heading : 6ms
+  delay(6);
+
+  Wire.requestFrom(SlaveAddress, 2); //get the two data bytes, MSB and LSB
+
+  //"The heading output data will be the value in tenths of degrees
+  //from zero to 3599 and provided in binary format over the two bytes."
+  byte MSB = Wire.read();
+  byte LSB = Wire.read();
+
+  headingSum = (MSB << 8) + LSB; //(MSB / LSB sum)
+  headingInt = headingSum / 10;
+  sHeading = dtostrf(headingInt, 1, 1, Buffer);
+
+  if(sHeading != "")
+  {
+    Serial.println(sHeading);
+  }
+
 }
