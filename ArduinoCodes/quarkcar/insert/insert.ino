@@ -41,7 +41,7 @@ void insert(float rsangle){
     analogWrite(motor, 200);
     delay(2000);
   }
-  else if(-45<rsangle&&rsangle<-10){
+  else if(-120<rsangle&&rsangle<-10){
     Carsteer.write(60);
     analogWrite(motor, 170);
     delay(1000);
@@ -49,7 +49,7 @@ void insert(float rsangle){
     analogWrite(motor, 170);
     delay(1000);
   }
-  else if(10<rsangle&&rsangle<45){
+  else if(10<rsangle&&rsangle<120){
     Carsteer.write(120);
     analogWrite(motor, 170);    
     delay(1000);
