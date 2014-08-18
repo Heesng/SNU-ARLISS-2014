@@ -62,16 +62,14 @@ int chipSelect = 53;
 void setup(){
   state = "S";
   Serial.begin(9600);
-  Serial1.begin(9600);
+  Serial1.begin(1200);
   Serial2.begin(9600);
 
   /*
   SDcard setting
   */
   pinMode(10, OUTPUT);
-  if (!SD.begin(chipSelect)) {
-    return;
-  } 
+  
 
   /*
   Compass setting
@@ -83,75 +81,20 @@ void setup(){
     -703,-737, -746  };
     compass.m_max = (LSM303::vector<int16_t>){
       +695, +461, +635  };
-
-  /*
-  Driving setting
-  */
-  //for steer
-  Carsteer.attach(3);
-  //for speed
-  pinMode(2,OUTPUT);
-  delay(1000);
-  for(int i = 56; i <= 104 ; i++){
-    analogWrite(motor, i);
-    delay(10);
-  }
-  analogWrite(motor, 170);
-  delay(1000);
-  analogWrite(motor, 190);
-  delay(1000);
+  Serial.println("Let's begin");
+  
 }
 
 void loop(){
-  String dataString = "";
-  //while(gpsEx.getLat()==0){
-    g = gpsEx.renew();
-  //}
-  //Serial.println("a");
-  float lat = gpsEx.getLat()/100;
-  float lng = gpsEx.getLng()/100;
-  dataString += String((long)(lat*1000000));
-  dataString += " ";
-  dataString += String((long)(lng*1000000));
+  
   //double satheading = 0;//rf.getheading();
   //for compass sensor
-  //Serial.println("b");
   compass.read();
-  //Serial.println("c");
   float heading_ = compass.heading((LSM303::vector<int>){0,1,0});
   sHeading = dtostrf(heading_,1,1,Buffer);
-  dataString += " ";
-  dataString += String((int)(heading_*10));
-  //Serial.println("d");
-  //float sheading_ = 0;
-  go(destlat,destlong,lat,lng, heading_);
-  dataString += " ";
-  dataString += String((int)osteer);
-  Serial.println(lat,6);
-  Serial.println(lng,6);
-  //steer(destlat,destlong,lat,lng,heading_);
-  //Serial.println("e");
-  File dataFile = SD.open("datalog.txt", FILE_WRITE);
-  // if the file is available, write to it:
-  if (dataFile) {
-    dataFile.println(dataString);
-    dataFile.close();
-    // print to the serial port too:
-  }
 
-  /*
-  RF sending code
-  */
-  /*
-  if(g==1){
-    mergeData(module,state,gpsEx.getSLat(),gpsEx.getSLng(),gpsEx.getSHgt(),sHeading);
-    rf.sendPck(rfData);
-  }
-  */
-  
   r = rf.receivePck(rcvPck);
-  Serial.print("r = ");
-  Serial.println(r);
+  Serial.print(r);
   if(r==0){
     readPck(rcvPck);
     Serial.print("module: ");
@@ -182,6 +125,7 @@ void go(float destlat,float destlong,float lat,float lng,float heading_){
     analogWrite(motor, 187);
     //steer(destlat,destlong,lat,lng, heading_);
   }
+  
 }
 
 void steer(float destlat,float destlong,float flatitude,float flongitude, float heading_){
@@ -261,22 +205,22 @@ int readPck(String pck_){
   char comma = ',';
 
   int i = pck_.indexOf(comma);
-  rmodule = pck_.substring(0,i-1);
+  rmodule = pck_.substring(0,i);
 
   int j = pck_.indexOf(comma,i+1);
-  rstate = pck_.substring(i+1,j-1);
+  rstate = pck_.substring(i+1,j);
 
   i = pck_.indexOf(comma,j+1);
-  rslat = pck_.substring(j+1,i-1);
+  rslat = pck_.substring(j+1,i);
 
   j= pck_.indexOf(comma,i+1);
-  rslng = pck_.substring(i+1,j-1);
+  rslng = pck_.substring(i+1,j);
 
   i = pck_.indexOf(comma,j+1);
-  rshgt = pck_.substring(j+1,i-1);
+  rshgt = pck_.substring(j+1,i);
 
   j= pck_.indexOf(comma,i+1);
-  rsheading = pck_.substring(i+1,j-1);
+  rsheading = pck_.substring(i+1,j);
 
   char buf0[rslat.length()];
   char buf1[rslng.length()];
