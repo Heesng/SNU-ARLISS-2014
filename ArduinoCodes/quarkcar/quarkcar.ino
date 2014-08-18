@@ -1,9 +1,14 @@
+#include <HerkuleX.h>
 #include <GPS.h>
 #include <Wire.h>
 #include <LSM303.h>
 #include <Math.h>
 #include <Servo.h>
 #include <SD.h>
+
+#define RX   0        // Connected with HerkuleX TX Pin
+#define TX   1        // Connected with HerkuleX RX Pin
+#define MOTORID  219  // HerkuleX Servo Motor ID
 
 /*
 Car functions
@@ -30,6 +35,18 @@ const int chipSelect = 53;
 
 void setup(){
   Serial.begin(9600);
+  HerkuleX.begin(57600, RX, TX);  
+  delay(10);
+  // Torque ON
+  HerkuleX.torqueOn(MOTORID);
+  
+  if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
+    HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
+  }
+  
+  HerkuleX.moveAngle(MOTORID, 0, 10, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
+  delay(1000);
+  
   Serial2.begin(9600);
   //for compass sensor
   pinMode(10, OUTPUT);
@@ -53,12 +70,14 @@ void setup(){
     delay(10);
   }
   analogWrite(motor, 170);
-  delay(1000);
+  delay(1000); 
   analogWrite(motor, 190);
   delay(1000);
 }
 
 void loop(){
+  unsigned char incomingbyte = 0;
+  
   float sheading_ = 0;
   String dataString = "";
   //while(gpsEx.getLat()==0){
@@ -122,7 +141,7 @@ void go(float destlat,float destlong,float lat,float lng,float heading_, float s
     steer(destlat,destlong,lat,lng,heading_);
   }
   else{
-    while(liftsonar()>){
+    while(liftsonar()>3){
       Carsteer.write(90);
       analogWrite(motor, 186);
       insert(rsangle);
