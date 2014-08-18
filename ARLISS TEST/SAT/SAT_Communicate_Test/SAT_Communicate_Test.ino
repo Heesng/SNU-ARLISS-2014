@@ -10,7 +10,14 @@ GPS gps;
 RF rf;
 
 String module = "S";
-int ledPin = 22;
+int chipSelect = 8;
+
+int ledPin1 = 9;
+int ledPin3 = 11;
+int ledpin5 = 13;
+
+
+
 
 void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_);
 int readPck(String pck_);
@@ -47,8 +54,6 @@ float headingInt;
 String sHeading;
 char Buffer[5];
 
-
-
 void setup(){
 	state = "S";
 	Serial.begin(9600);
@@ -71,9 +76,9 @@ void loop(){
   RF sending code
   */
   mergeData(module,state,"1234.5678","11234.5678","20",sHeading);
-  Serial.println(rfData);
-  Serial.println(sdData);
   rf.sendPck(rfData);
+  Serial.print("send: ");
+  Serial.println(rfData);
 
   /*
   RF receive code
@@ -93,6 +98,7 @@ void loop(){
     Serial.println(rshgt);
     Serial.print("heading: ");
     Serial.println(rsheading);
+    
   }
 
   delay(1000);
@@ -111,22 +117,22 @@ int readPck(String pck_){
   char comma = ',';
 
   int i = pck_.indexOf(comma);
-  rmodule = pck_.substring(0,i-1);
+  rmodule = pck_.substring(0,i);
 
   int j = pck_.indexOf(comma,i+1);
-  rstate = pck_.substring(i+1,j-1);
+  rstate = pck_.substring(i+1,j);
 
   i = pck_.indexOf(comma,j+1);
-  rslat = pck_.substring(j+1,i-1);
+  rslat = pck_.substring(j+1,i);
 
   j= pck_.indexOf(comma,i+1);
-  rslng = pck_.substring(i+1,j-1);
+  rslng = pck_.substring(i+1,j);
 
   i = pck_.indexOf(comma,j+1);
-  rshgt = pck_.substring(j+1,i-1);
+  rshgt = pck_.substring(j+1,i);
 
   j= pck_.indexOf(comma,i+1);
-  rsheading = pck_.substring(i+1,j-1);
+  rsheading = pck_.substring(i+1,j);
 
   char buf0[rslat.length()];
   char buf1[rslng.length()];
