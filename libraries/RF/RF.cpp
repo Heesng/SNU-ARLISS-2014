@@ -38,7 +38,7 @@ int RF::receivePck(String & A)
       	c = Serial1.read();delay(5);
         if(c == 'U'){delay(5);
           c = Serial1.read();delay(5);
-          while(c != '\n' && i<200)
+          while(c != '\n' && i<50)
           {
             i++;
             A += c;delay(5);

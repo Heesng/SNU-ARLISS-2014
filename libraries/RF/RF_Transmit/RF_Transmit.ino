@@ -17,6 +17,7 @@ void loop(){
     A += c;
   }
   if(A != ""){
+    Serial.println(A);
     rfEx.sendPck(A);
   }
   delay(500);
