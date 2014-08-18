@@ -26,6 +26,13 @@ int GPS::renew(){
     return 1; //renewed
   }
 }
+
+int GPS::liftsonar(int pinnum){
+  int duration = pulseIn(pinnum,LOW);
+  return duration*170/10000;
+}
+
+
 double GPS::getLat(){return latitude;}
 double GPS::getLng(){return longitude;}
 double GPS::getHgt(){return height;}
