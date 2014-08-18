@@ -29,7 +29,9 @@ void RF::sendPck(String A)
 int RF::receivePck(String & A)
 {
   int i = 0;
-	char c;
+  char c;
+  String temp = A;
+  A = "";
   while(Serial1.available()>10){
     c = Serial1.read();delay(5);
     if(c == 'S'){delay(5);
@@ -58,11 +60,16 @@ int RF::receivePck(String & A)
           cs_[1] = (chescksum >> 8) & 0xFF;
 
           if(cs[0] == cs_[0] && cs[1]==cs_[1]) return 0; //received without noise
-          else return -1; //received with noise
+          else {
+            A = temp;
+            return -1;
+          } //received with noise
         }
       }
     }
-  }return 1;//packet is not received.
+  }
+  A = temp;
+  return 1;//packet is not received.
 }
 
 /*
