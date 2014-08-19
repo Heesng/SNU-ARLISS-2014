@@ -16,7 +16,7 @@ Car functions
 void steer(float a,float b,float c,float d,float e);
 void go(float a,float b,float c,float d,float e,float f);
 void insert(float a);
-
+void lift();
 /*
 Car Variables
 */
@@ -30,6 +30,8 @@ float Pgain = 1, Dgain, Igain;
 float osteer;
 int tactswitch = 0;
 int motor = 2;
+int sonar1 = 22;
+int sonar2 = 23;
 
 const int chipSelect = 53;
 
@@ -39,11 +41,9 @@ void setup(){
   delay(10);
   // Torque ON
   HerkuleX.torqueOn(MOTORID);
-  
   if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
     HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
   }
-  
   HerkuleX.moveAngle(MOTORID, 0, 10, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
   delay(1000);
   
@@ -73,10 +73,14 @@ void setup(){
   delay(1000); 
   analogWrite(motor, 190);
   delay(1000);
+  pinMode(sonar1,INPUT); // 센서 Echo 핀
+  pinMode(sonar2,INPUT); // 센서 Echo 핀
 }
 
 void loop(){
-  unsigned char incomingbyte = 0;
+  if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
+    HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
+  }
   
   float sheading_ = 0;
   String dataString = "";
@@ -141,11 +145,12 @@ void go(float destlat,float destlong,float lat,float lng,float heading_, float s
     steer(destlat,destlong,lat,lng,heading_);
   }
   else{
-    while(liftsonar()>3){
+    while(gpsEx.liftsonar(sonar1)>3){
       Carsteer.write(90);
       analogWrite(motor, 186);
       insert(rsangle);
     }
+    lift();
   }
 }
 
@@ -235,5 +240,41 @@ void insert(float rsangle){
     Carsteer.write(60);
     analogWrite(motor, 170);
     delay(1000);    
+  }
+}
+
+void lift(){
+  if (Serial.available() > 0) {  // If Serial(with PC) is available
+    unsigned char incomingbyte = Serial.read();  // Reading a byte from PC
+
+    if (incomingbyte == '0') {
+      Serial.println("Move angle to 0");
+      // Move HerkuleX to 0 degree by 112ms, Turn green LED on.
+      HerkuleX.moveAngle(MOTORID, 0, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);  
+    }
+
+    if (incomingbyte == '1') {
+      Serial.println("Move angle to 170");
+      // Move HerkuleX to 170 degree by 112ms, Turn blue LED on.
+      HerkuleX.moveAngle(MOTORID, 160, 100, HERKULEX_LED_BLUE);  
+    }
+    
+    if (incomingbyte == '2') {
+      Serial.println("Move angle to -170");
+      // Move HerkuleX 512, 11.2ms * 100 = 1120ms, Turn red LED on
+      HerkuleX.moveAngle(MOTORID, -160, 100, HERKULEX_LED_GREEN);
+    }
+
+    if (incomingbyte == 'a') {
+      Serial.println("Current angle");
+      // Get current HerkuleX angle and send it to PC
+      Serial.println(HerkuleX.getAngle(MOTORID));  
+    }
+    
+    if (incomingbyte == 'q') {
+      Serial.println("Finish");
+      // Torque OFF
+      HerkuleX.torqueOff(MOTORID);
+    }
   }
 }
