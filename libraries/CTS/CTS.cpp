@@ -37,18 +37,24 @@ int CTS::size(int num)
 
 int CTS::location()
 {
-	int x1=CTS::xcoord(1);
-	int x2=CTS::xcoord(2);
-	if(x1==200)
+	int x[6];
+	int num=0;
+	int sum=0;
+
+	for(int i=0;i<6;i++)
 	{
-		return x2;
+		x[i]=CTS::xcoord(i+1);
+		if(x[i]!=200)
+		{
+			sum+=x[i];
+			num++;
+		}
 	}
-	else
-	{
-		if(x2==200)
-			return x1;
-		else return (x1+x2)/2;
-	}
+	if(sum==0)
+		return 200;
+	return sum/num;
+
+
 	/* using color1 : 1-3 , color2 : 4-6, color3 : 7-9
 		//3k+1Àº u, vÀÇ ÆøÀÌ Á¼°Ô, 3k+2¿Í 3k+3Àº Á¡Á¡ ³Ð°Ô
 	int x[9];
