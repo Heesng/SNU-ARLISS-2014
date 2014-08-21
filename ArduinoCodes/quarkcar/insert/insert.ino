@@ -12,7 +12,7 @@ int data=0;
 int center=120;
 int preloc = 200;
 
-void setup(){
+void setup(){ 
   delay(3000);
   Serial.begin(115200);
   Serial3.begin(115200);
@@ -31,12 +31,12 @@ void setup(){
 
 void loop(){
     val = CTS1.location();
-//    if(val!=200){
-//      preloc = val;
-//    }
-//    if(val==200&&preloc!=200){
-//      insert(201);
-//    }      
+    if(val!=200){
+      preloc = val;
+    }
+    if(val==200&&preloc!=200){
+      insert(201); 
+    }      
     insert(val);
     Serial.println(val);
     delay(1000);
