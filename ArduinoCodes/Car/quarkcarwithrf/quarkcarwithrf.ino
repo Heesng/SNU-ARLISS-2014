@@ -30,6 +30,8 @@ Servo Carsteer;
 LSM303 compass;
 float destlat = 37.279319;
 float destlong = 126.570091;
+float lat;
+float lng;
 float steer_car,dsteer_car,isteer_car = 0, steer_car0;
 float Pgain = 1, Dgain, Igain;
 float osteer;
@@ -64,16 +66,16 @@ int chipSelect = 53;
 void setup(){
   state = "S";
   Serial.begin(9600);
-  Serial1.begin(9600);
+  Serial1.begin(1200);
   Serial2.begin(9600);
 
   /*
   SDcard setting
   */
   pinMode(10, OUTPUT);
-  if (!SD.begin(chipSelect)) {
-    return;
-  } 
+//  if (!SD.begin(chipSelect)) {
+//    return;
+//  } 
 
   /*
   Compass setting
@@ -105,44 +107,44 @@ void setup(){
 }
 
 void loop(){
-  String dataString = "";
+//  String dataString = "";
   //while(gpsEx.getLat()==0){
     g = gpsEx.renew();
   //}
-  //Serial.println("a");
+//  Serial.println("a");
   if(g==1){
-    float lat = gpsEx.getLat()/100;
-    float lng = gpsEx.getLng()/100;
+    lat = gpsEx.getLat()/100;
+    lng = gpsEx.getLng()/100;
   }
-  dataString += String((long)(lat*1000000));
-  dataString += "	";
-  dataString += String((long)(lng*1000000));
+//  dataString += String((long)(lat*1000000));
+//  dataString += "	";
+//  dataString += String((long)(lng*1000000));
   //double satheading = 0;//rf.getheading();
   //for compass sensor
-  //Serial.println("b");
+//  Serial.println("b");
   compass.read();
-  //Serial.println("c");
+//  Serial.println("c");
   float heading_ = compass.heading((LSM303::vector<int>){0,1,0});
   sHeading = dtostrf(heading_,1,1,Buffer);
-  dataString += "	";
-  dataString += String((int)(heading_*10));
-  //Serial.println("d");
+//  dataString += "	";
+//  dataString += String((int)(heading_*10));
+//  Serial.println("d");
   //float sheading_ = 0;
   go(rlat,rlng,lat,lng, heading_);
-  dataString += "	";
-  dataString += String((int)osteer);
+//  dataString += "	";
+//  dataString += String((int)osteer);
   Serial.println(lat,6);
   Serial.println(lng,6);
+  Serial.println(heading_);
   //steer(destlat,destlong,lat,lng,heading_);
-  //Serial.println("e");
-  File dataFile = SD.open("datalog.txt", FILE_WRITE);
+//  Serial.println("e");
+//  File dataFile = SD.open("datalog.txt", FILE_WRITE);
   // if the file is available, write to it:
-  if (dataFile) {
-    dataFile.println(dataString);
-    dataFile.close();
+//  if (dataFile) {
+//    dataFile.println(dataString);
+//    dataFile.close();
     // print to the serial port too:
-  }
-
+//  }
   /*
   RF sending code
   */
@@ -151,8 +153,10 @@ void loop(){
     rf.sendPck(rfData);
   }
 
-
+//  Serial.println("f");
+  
   r = rf.receivePck(rcvPck);
+  Serial.println(rcvPck);
   if(r==0){
     readPck(rcvPck);
     Serial.print("module: ");
@@ -171,6 +175,7 @@ void loop(){
 //  else {
 //    Serial.println("error opening datalog.txt");
 //  }
+//  Serial.println("h");
 }
 //motor neutral = 186~188
 //motor possible range = 
@@ -287,9 +292,9 @@ int readPck(String pck_){
   if(rslat.length() != 0)
   {
     rslat.toCharArray(buf0,rslat.length());
-    rlat = atof(buf0); 
+    rlat = atof(buf0)/100; 
     rslng.toCharArray(buf1,rslng.length());
-    rlng = atof(buf1); 
+    rlng = atof(buf1)/100; 
     rshgt.toCharArray(buf2,rshgt.length());
     rhgt = atof(buf2);
     rsheading.toCharArray(buf2,rsheading.length());
