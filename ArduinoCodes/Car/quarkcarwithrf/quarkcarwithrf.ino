@@ -28,8 +28,9 @@ RF rf;
 GPS gpsEx;
 Servo Carsteer;
 LSM303 compass;
-float destlat = 37.279319;
-float destlong = 126.570091;
+int goback = 1;
+float startlat = 37.279319;
+float startlong = 126.570091;
 float lat;
 float lng;
 float steer_car,dsteer_car,isteer_car = 0, steer_car0;
@@ -109,13 +110,13 @@ void setup(){
 void loop(){
 //  String dataString = "";
   //while(gpsEx.getLat()==0){
-  g = gpsEx.renew();
+    g = gpsEx.renew();
   //}
 //  Serial.println("a");
-  if(g==1){
-   lat = gpsEx.getLat()/100;
-   lng = gpsEx.getLng()/100;
-  }
+  
+    lat = gpsEx.getLat()/100;
+    lng = gpsEx.getLng()/100;
+  
 //  dataString += String((long)(lat*1000000));
 //  dataString += "	";
 //  dataString += String((long)(lng*1000000));
@@ -154,9 +155,9 @@ void loop(){
   }
 
 //  Serial.println("f");
-
+  
   r = rf.receivePck(rcvPck);
-  //Serial.println(rcvPck);
+  Serial.println(rcvPck);
   if(r==0){
     readPck(rcvPck);
     Serial.print("module: ");
@@ -180,13 +181,21 @@ void loop(){
 //motor neutral = 179~184
 //motor possible range = 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
-  if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) > 0.00009*0.00009){
-    analogWrite(motor, 190);
+  if(((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) > 0.00009*0.00009)&&goback){
+    analogWrite(motor, 200);
     steer(destlat,destlong,lat,lng,heading_);
   }
-  else{
-    analogWrite(motor, 187);
+  else if (goback){
+    analogWrite(motor, 181);
+    goback = 0;
     //steer(destlat,destlong,lat,lng, heading_);
+  }
+  if(((startlat-lat)*(startlat-lat) + (startlong-lng)*(startlong-lng) > 0.00009*0.00009)&&goback==0){
+    analogWrite(motor, 190);
+    steer(startlat,startlong,lat,lng,heading_);
+  } 
+  else if (goback == 0){
+    analogWrite(motor, 181);
   }
 }
 
@@ -292,9 +301,9 @@ int readPck(String pck_){
   if(rslat.length() != 0)
   {
     rslat.toCharArray(buf0,rslat.length());
-    rlat = atof(buf0); 
+    rlat = atof(buf0)/100; 
     rslng.toCharArray(buf1,rslng.length());
-    rlng = atof(buf1); 
+    rlng = atof(buf1)/100; 
     rshgt.toCharArray(buf2,rshgt.length());
     rhgt = atof(buf2);
     rsheading.toCharArray(buf2,rsheading.length());
