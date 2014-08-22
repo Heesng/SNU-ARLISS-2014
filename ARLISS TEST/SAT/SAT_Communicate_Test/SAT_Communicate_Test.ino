@@ -2,7 +2,7 @@
 #include <GPS.h>
 #include <RF.h>
 #include <SD.h>
-#include <math.h> 
+#include <math.h>
 #include <Wire.h>
 
 ADCS adcs;
@@ -16,12 +16,11 @@ int ledPin1 = 9;
 int ledPin3 = 11;
 int ledpin5 = 13;
 
-
-
-
 void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_);
 int readPck(String pck_);
 void compassRenew();
+void sdWrite(String dataString);
+
 
 int a,d,g=0, r=0; //adcs,dcs,gps,rfrcv
 
@@ -60,12 +59,26 @@ void setup(){
 	Serial1.begin(1200);
 	Serial2.begin(9600);
 
+  /*
+  compass setting
+  */
   SlaveAddress = SlaveAddress >> 1; // I know 0x42 is less than 127, but this is still required
-
   Wire.begin();
+
+  /*
+  sd card setting
+  */
+  pinMode(10, OUTPUT);
+  SD.begin(chipSelect);
+
+  g = 0;
+  while(g != 1){ g = gps.renew();}
+
 }
 
 void loop(){
+
+  g = gps.renew();
 
   /*
   Compass renew
@@ -75,11 +88,11 @@ void loop(){
   /*
   RF sending code
   */
-  mergeData(module,state,"1234.5678","11234.5678","20",sHeading);
-  rf.sendPck(rfData);
-  Serial.print("send: ");
-  Serial.println(rfData);
-
+  if(g==1){
+    mergeData(module,state,gps.getSLat(),gps.getSLng(),gps.getSHgt(),sHeading);
+    rf.sendPck(rfData);
+    sdWrite(sdData);
+  }
   /*
   RF receive code
   */
@@ -101,7 +114,7 @@ void loop(){
     
   }
 
-  delay(1000);
+  delay(100);
 }
 
 
@@ -162,7 +175,7 @@ int readPck(String pck_){
 }
 
 void compassRenew(){
-    Wire.beginTransmission(SlaveAddress);
+  Wire.beginTransmission(SlaveAddress);
   Wire.write(ReadAddress);              // The "Get Data" command
   Wire.endTransmission();
 
@@ -185,5 +198,18 @@ void compassRenew(){
   {
     Serial.println(sHeading);
   }
+}
 
+
+void sdWrite(String dataString){
+  File dataFile = SD.open("datalog.txt", FILE_WRITE);
+
+   // if the file is available, write to it:
+   if(dataFile){
+    dataFile.println(dataString);
+    dataFile.close();
+
+      // print to the serial port too:
+      Serial.println(dataString);
+    }
 }
