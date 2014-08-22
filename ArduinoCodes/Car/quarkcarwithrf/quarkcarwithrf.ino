@@ -110,8 +110,10 @@ void loop(){
     g = gpsEx.renew();
   //}
   //Serial.println("a");
-  float lat = gpsEx.getLat()/100;
-  float lng = gpsEx.getLng()/100;
+  if(g==1){
+    float lat = gpsEx.getLat()/100;
+    float lng = gpsEx.getLng()/100;
+  }
   dataString += String((long)(lat*1000000));
   dataString += "	";
   dataString += String((long)(lng*1000000));
@@ -126,7 +128,7 @@ void loop(){
   dataString += String((int)(heading_*10));
   //Serial.println("d");
   //float sheading_ = 0;
-  go(destlat,destlong,lat,lng, heading_);
+  go(rlat,rlng,lat,lng, heading_);
   dataString += "	";
   dataString += String((int)osteer);
   Serial.println(lat,6);
