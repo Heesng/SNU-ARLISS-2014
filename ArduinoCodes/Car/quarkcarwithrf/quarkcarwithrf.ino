@@ -109,12 +109,12 @@ void setup(){
 void loop(){
 //  String dataString = "";
   //while(gpsEx.getLat()==0){
-    g = gpsEx.renew();
+  g = gpsEx.renew();
   //}
 //  Serial.println("a");
   if(g==1){
-    lat = gpsEx.getLat()/100;
-    lng = gpsEx.getLng()/100;
+   lat = gpsEx.getLat()/100;
+   lng = gpsEx.getLng()/100;
   }
 //  dataString += String((long)(lat*1000000));
 //  dataString += "	";
@@ -154,9 +154,9 @@ void loop(){
   }
 
 //  Serial.println("f");
-  
+
   r = rf.receivePck(rcvPck);
-  Serial.println(rcvPck);
+  //Serial.println(rcvPck);
   if(r==0){
     readPck(rcvPck);
     Serial.print("module: ");
@@ -267,22 +267,22 @@ int readPck(String pck_){
   char comma = ',';
 
   int i = pck_.indexOf(comma);
-  rmodule = pck_.substring(0,i-1);
+  rmodule = pck_.substring(0,i);
 
   int j = pck_.indexOf(comma,i+1);
-  rstate = pck_.substring(i+1,j-1);
+  rstate = pck_.substring(i+1,j);
 
   i = pck_.indexOf(comma,j+1);
-  rslat = pck_.substring(j+1,i-1);
+  rslat = pck_.substring(j+1,i);
 
   j= pck_.indexOf(comma,i+1);
-  rslng = pck_.substring(i+1,j-1);
+  rslng = pck_.substring(i+1,j);
 
   i = pck_.indexOf(comma,j+1);
-  rshgt = pck_.substring(j+1,i-1);
+  rshgt = pck_.substring(j+1,i);
 
   j= pck_.indexOf(comma,i+1);
-  rsheading = pck_.substring(i+1,j-1);
+  rsheading = pck_.substring(i+1,j);
 
   char buf0[rslat.length()];
   char buf1[rslng.length()];
@@ -292,9 +292,9 @@ int readPck(String pck_){
   if(rslat.length() != 0)
   {
     rslat.toCharArray(buf0,rslat.length());
-    rlat = atof(buf0)/100; 
+    rlat = atof(buf0); 
     rslng.toCharArray(buf1,rslng.length());
-    rlng = atof(buf1)/100; 
+    rlng = atof(buf1); 
     rshgt.toCharArray(buf2,rshgt.length());
     rhgt = atof(buf2);
     rsheading.toCharArray(buf2,rsheading.length());
