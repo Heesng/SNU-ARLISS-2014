@@ -177,7 +177,7 @@ void loop(){
 //  }
 //  Serial.println("h");
 }
-//motor neutral = 186~188
+//motor neutral = 179~184
 //motor possible range = 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
   if((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) > 0.00009*0.00009){
