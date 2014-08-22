@@ -97,7 +97,7 @@ String GPS::getLat(String Buf){
   i = Buf.indexOf(comma);
   i = Buf.indexOf(comma,i+1);
   j = Buf.indexOf(comma,i+1);
-  if(i + 1 == j)  return 0;
+  if(i + 1 == j)  return "0";
   else{
     temp = Buf.substring(i+1,j);
     return temp;
@@ -114,7 +114,7 @@ String GPS::getLong(String Buf){
   i = Buf.indexOf(comma,i+1);
   i = Buf.indexOf(comma,i+1);
   j = Buf.indexOf(comma,i+1);
-  if(i + 1 == j)  return 0;
+  if(i + 1 == j)  return "0";
   else{
     temp = Buf.substring(i+1,j);
     return temp;
@@ -136,7 +136,7 @@ String GPS::getHigh(String Buf){
   i = Buf.indexOf(comma,i+1);
   i = Buf.indexOf(comma,i+1);
   j = Buf.indexOf(comma,i+1);
-  if(i + 1 == j)  return 0;
+  if(i + 1 == j)  return "0";
   else{
     temp = Buf.substring(i+1,j);
     return temp;
