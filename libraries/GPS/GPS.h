@@ -34,6 +34,7 @@ private:
   String getLong(String Buf);
   String getHigh(String Buf);
   void StoF();
+  int spellCheck(String Buf);
   
   String GPSBuf; //Whole GPS data buffer
   String GPSPhr; //GPS phrase buffer

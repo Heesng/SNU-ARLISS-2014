@@ -12,35 +12,42 @@ GPS::GPS(){
 }
 
 int GPS::renew(){
-  
+
   BufIn(GPSBuf);
   int i = getPhrase(GPSBuf, GPSPhr);
   if(i == 1) return 0;  //not renewed 
   else{
+    String tempLat = getLat(GPSPhr);
+    String tempLng = getLong(GPSPhr);
+    String temphgt = getHigh(GPSPhr);
 
-    sLatitude = getLat(GPSPhr);
-    sLongitude = getLong(GPSPhr);
-    sHeight = getHigh(GPSPhr);
+    int a = spellCheck(tempLat);
+    int b = spellCheck(tempLng);
+    int c = spellCheck(temphgt);
+
+    if(a == 0) sLatitude = tempLat;
+    if(b == 0) sLongitude = tempLng;
+    if(c == 0) sHeight = temphgt;
     StoF();
-    count ++;
-    return 1; //renewed
+    return 1;
+
   }
 }
 
-int GPS::liftsonar(int pinnum){
-  int duration = pulseIn(pinnum,LOW);
-  return duration*170/10000;
-}
+  int GPS::liftsonar(int pinnum){
+    int duration = pulseIn(pinnum,LOW);
+    return duration*170/10000;
+  }
 
 
-double GPS::getLat(){return latitude;}
-double GPS::getLng(){return longitude;}
-double GPS::getHgt(){return height;}
-double GPS::getDeltaH(){return deltaH;}
+  double GPS::getLat(){return latitude;}
+  double GPS::getLng(){return longitude;}
+  double GPS::getHgt(){return height;}
+  double GPS::getDeltaH(){return deltaH;}
 
-String GPS::getSLat(){return sLatitude;}
-String GPS::getSLng(){return sLongitude;}
-String GPS::getSHgt(){return sHeight;}
+  String GPS::getSLat(){return sLatitude;}
+  String GPS::getSLng(){return sLongitude;}
+  String GPS::getSHgt(){return sHeight;}
 
 
 
@@ -64,7 +71,7 @@ int GPS::getPhrase(String & momBuf, String & sonBuf){ //Get the phrase that incl
   i = momBuf.lastIndexOf(Init, i-1);  
   
   while(1){
-    
+
     if(i == -1){ //In the case that GPS data is not received 
       e = 1;
       break;
@@ -160,5 +167,19 @@ void GPS::StoF(){
     longitude = 0;
     height = 0;
   }
-  
+}
+
+int GPS::spellCheck(String Buf){
+
+  int n = Buf.length();
+  int i = 0;
+  char c;
+  int result = 0;
+
+  while(i<n){
+    c = Buf.charAt(i);
+    if(('0'>c || c>'9')&&c!='.'){return -1;}
+    i++;
+  }
+  return 0;
 }
