@@ -29,8 +29,8 @@ GPS gpsEx;
 Servo Carsteer;
 LSM303 compass;
 int goback = 1;
-float startlat = 37.279319;
-float startlong = 126.570091;
+float startlat = 37.276210;
+float startlong = 126.570167;
 float lat;
 float lng;
 float steer_car,dsteer_car,isteer_car = 0, steer_car0;
@@ -105,6 +105,8 @@ void setup(){
   delay(1000);
   analogWrite(motor, 190);
   delay(1000);
+  analogWrite(motor, 181);
+  delay(1000);
 }
 
 void loop(){
@@ -134,9 +136,9 @@ void loop(){
   go(rlat,rlng,lat,lng, heading_);
 //  dataString += "	";
 //  dataString += String((int)osteer);
-  Serial.println(lat,6);
-  Serial.println(lng,6);
-  Serial.println(heading_);
+//  Serial.println(lat,6);
+//  Serial.println(lng,6);
+//  Serial.println(heading_);
   //steer(destlat,destlong,lat,lng,heading_);
 //  Serial.println("e");
 //  File dataFile = SD.open("datalog.txt", FILE_WRITE);
@@ -148,12 +150,12 @@ void loop(){
 //  }
   /*
   RF sending code
-  */
+  
   if(g==1){
     mergeData(module,state,gpsEx.getSLat(),gpsEx.getSLng(),gpsEx.getSHgt(),sHeading);
     rf.sendPck(rfData);
   }
-
+*/
 //  Serial.println("f");
   
   r = rf.receivePck(rcvPck);
@@ -182,7 +184,7 @@ void loop(){
 //motor possible range = 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
   if(((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) > 0.00009*0.00009)&&goback){
-    analogWrite(motor, 200);
+    analogWrite(motor, 186);
     steer(destlat,destlong,lat,lng,heading_);
   }
   else if (goback){
@@ -191,7 +193,7 @@ void go(float destlat,float destlong,float lat,float lng,float heading_){
     //steer(destlat,destlong,lat,lng, heading_);
   }
   if(((startlat-lat)*(startlat-lat) + (startlong-lng)*(startlong-lng) > 0.00009*0.00009)&&goback==0){
-    analogWrite(motor, 190);
+    analogWrite(motor, 186);
     steer(startlat,startlong,lat,lng,heading_);
   } 
   else if (goback == 0){
@@ -203,6 +205,7 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   float dy = destlat - flatitude;
   float dx = cos(flatitude*3.141592/180)*(destlong-flongitude);
   float angle = atan(dy/dx)*180/3.141592;
+  float offset = 11;
   //float dsx = cos(satheading*3.14/180);
   //float dsy = sin(satheading*3.14/180);
   //int power = 0;//1/((destlat-flatitude)*(destlat-flatitude)+(destlong-flongitude)*(destlong-flongitude));
@@ -223,7 +226,7 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   Serial.println(angle);
   
   steer_car = angle - heading_;
-  
+  //steer_car = steer_car + 40;
   Serial.println(steer_car);  
   
   float psteer_car = steer_car;
@@ -241,9 +244,10 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   isteer_car = isteer_car + dsteer_car;
   
   float osteer_car = Pgain*psteer_car + Dgain*dsteer_car + Igain*isteer_car;
-
+  osteer_car = osteer_car - offset;
+  
   if (-180.0 <= psteer_car && psteer_car < -90.0){
-    osteer = 120;
+    osteer = 120-offset;
   }
   else if(-90.0 <= psteer_car && psteer_car <= 90.0){
     //osteer = map(psteer_car, 270, 360, 120, 90);// (-1)*(3*steer)/9 + 210;
@@ -254,14 +258,15 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
     else if(osteer_car>90){
       osteer_car = 90;
     }
-    osteer = map(osteer_car, -90, 90, 120, 60);
+    osteer = map(osteer_car, -90, 90, 120-offset, 60-offset);
   }
   else if(90.0 <= psteer_car && psteer_car < 180.0){ 
-    osteer = 60;
+    osteer = 60-offset;
   }
   Carsteer.write(osteer);
+  //osteer = 79; - > offset정중
   //delay(1000);
-  //Serial.println(osteer);
+  Serial.println(osteer);
   //dataString += String((int)osteer);
 }
 
