@@ -13,7 +13,7 @@ public:
 
   GPS();
   int renew();
-  int liftsonar(int pinnum);
+  long liftsonar(int pinnum);
 
   
   double getLat();

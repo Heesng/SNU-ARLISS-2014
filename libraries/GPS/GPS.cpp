@@ -34,8 +34,8 @@ int GPS::renew(){
   }
 }
 
-  int GPS::liftsonar(int pinnum){
-    int duration = pulseIn(pinnum,LOW);
+  long GPS::liftsonar(int pinnum){
+    long duration = pulseIn(pinnum,LOW);
     return duration*170/10000;
   }
 

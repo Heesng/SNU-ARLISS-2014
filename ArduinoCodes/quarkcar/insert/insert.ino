@@ -11,6 +11,7 @@ void insert(float a);
 void lift(float a);
 
 CTS CTS1;
+GPS gpsEx;
 Servo Carsteer;
 float rsangle = 0;
 int motor = 2;
@@ -18,7 +19,7 @@ int val = 0;
 int data=0;
 int center=120;
 int preloc = 200;
-int sonar1 = 22;
+int sonar1 = 49;
 
 void setup(){ 
   delay(3000);
