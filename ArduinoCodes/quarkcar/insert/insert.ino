@@ -23,7 +23,7 @@ int sonar1 = 49;
 
 void setup(){ 
   delay(3000);
-  Serial.begin(9600);
+//  Serial.begin(9600);
   HerkuleX.begin(57600, RX, TX);  
   delay(10);
   // Torque ON
@@ -31,7 +31,7 @@ void setup(){
   if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
     HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
   }
-  HerkuleX.moveAngle(MOTORID, 0, 10, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
+  HerkuleX.moveAngle(MOTORID, 30, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
   delay(1000);
   
   Serial3.begin(115200);
@@ -48,14 +48,17 @@ void setup(){
   delay(1000);
   analogWrite(motor, 181);
   delay(1000);
+  
   pinMode(sonar1, INPUT);
 }
 
 void loop(){
+  int sonardist1 = gpsEx.liftsonar(sonar1);
     if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
       HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
     }
-  
+    lift(-110);
+  while(sonardist1>15){
     val = CTS1.location();
     if(val!=200){
       preloc = val;
@@ -64,8 +67,9 @@ void loop(){
       insert(201); 
     }      
     insert(val);
-    Serial.println(val);
-    delay(1000);
+  }
+  lift(30);
+  delay(1000);
 }
 
 void insert(float rsangle){
@@ -118,7 +122,5 @@ void insert(float rsangle){
 }
 //110 ground degree
 void lift(int angle){
-  if (Serial.available() > 0) {  // If Serial(with PC) is available
     HerkuleX.moveAngle(MOTORID, angle, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);  
-  }
 }
