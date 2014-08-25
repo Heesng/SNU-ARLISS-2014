@@ -1,7 +1,14 @@
 #include<Servo.h>
 #include<CTS.h>
+#include<HerkuleX.h>
+#include<GPS.h>
+
+#define RX 0
+#define TX 1
+#define MOTORID 219
 
 void insert(float a);
+void lift(float a);
 
 CTS CTS1;
 Servo Carsteer;
@@ -11,10 +18,21 @@ int val = 0;
 int data=0;
 int center=120;
 int preloc = 200;
+int sonar1 = 22;
 
 void setup(){ 
   delay(3000);
-  Serial.begin(115200);
+  Serial.begin(9600);
+  HerkuleX.begin(57600, RX, TX);  
+  delay(10);
+  // Torque ON
+  HerkuleX.torqueOn(MOTORID);
+  if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
+    HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
+  }
+  HerkuleX.moveAngle(MOTORID, 0, 10, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
+  delay(1000);
+  
   Serial3.begin(115200);
   Carsteer.attach(3);
   pinMode(2,OUTPUT);
@@ -27,9 +45,16 @@ void setup(){
   delay(1000);
   analogWrite(motor, 190);
   delay(1000);
+  analogWrite(motor, 181);
+  delay(1000);
+  pinMode(sonar1, INPUT);
 }
 
 void loop(){
+    if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
+      HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
+    }
+  
     val = CTS1.location();
     if(val!=200){
       preloc = val;
@@ -88,5 +113,11 @@ void insert(float rsangle){
     delay(100);
     analogWrite(motor, 175);
     delay(100);
+  }
+}
+//110 ground degree
+void lift(int angle){
+  if (Serial.available() > 0) {  // If Serial(with PC) is available
+    HerkuleX.moveAngle(MOTORID, angle, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);  
   }
 }
