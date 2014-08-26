@@ -2,7 +2,7 @@
 #include "ADCS.h"
 
 ADCS::ADCS(){
-	/*
+	
 	pwmPin1 = 2;
 	enablePin1 = 4;
 	dirPin1 =3;
@@ -10,7 +10,8 @@ ADCS::ADCS(){
 	pwmPin2 = 5;
 	enablePin2 = 7;
 	dirPin2 = 6;
-	*/
+	
+	/*
 	pwmPin1 = 5;
 	enablePin1 = 7;
 	dirPin1 =6;
@@ -18,6 +19,7 @@ ADCS::ADCS(){
 	pwmPin2 =2;
 	enablePin2 = 4;
 	dirPin2 = 3;
+	*/
 
 	XAccPin = 0;
 	YAccPin = 1;
