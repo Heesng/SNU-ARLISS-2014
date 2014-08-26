@@ -30,12 +30,12 @@ String rcvPck = "";
 String rfData = "";
 String sdData = "";
 
-String rmodule;//Received module
-String rstate;//Received state
-String rslat;//Received String latitude
-String rslng;//Received String longitude
-String rshgt;//Received String height
-String rsheading;//Received String heading
+String rmodule = " ";//Received module
+String rstate = " ";//Received state
+String rslat = " ";//Received String latitude
+String rslng = " ";//Received String longitude
+String rshgt = " ";//Received String height
+String rsheading = " ";//Received String heading
 
 float rlat = 0;//Received latitude
 float rlng = 0;//Received longitude
@@ -92,6 +92,7 @@ void loop(){
     mergeData(module,state,gps.getSLat(),gps.getSLng(),gps.getSHgt(),sHeading);
     rf.sendPck(rfData);
     sdWrite(sdData);
+    Serial.println(rfData);
   }
   /*
   RF receive code
@@ -196,7 +197,7 @@ void compassRenew(){
 
   if(sHeading != "")
   {
-    Serial.println(sHeading);
+   // Serial.println(sHeading);
   }
 }
 
