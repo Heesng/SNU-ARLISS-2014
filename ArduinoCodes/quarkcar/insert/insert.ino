@@ -54,28 +54,28 @@ void setup(){
 }
 
 void loop(){
-    if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
-      HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
-    }
-    HerkuleX.moveAngle(MOTORID, 150, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
-    delay(1000);
-  while(sonardist1>5){
-      sonardist1 = gpsEx.liftsonar(sonar1);
-//    val = CTS1.location();
-//    if(val!=200){
-//      preloc = val;
-//    }
-//    if(val==200&&preloc!=200){
-//      insert(201); 
-//    }      
-//    insert(val);
+  if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
+    HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
   }
-    if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
-      HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
+  HerkuleX.moveAngle(MOTORID, 150, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
+  delay(1000);
+  while(sonardist1>5){
+    sonardist1 = gpsEx.liftsonar(sonar1);
+    val = CTS1.location();
+    if(val!=200){
+      preloc = val;
     }
-    HerkuleX.moveAngle(MOTORID, -30, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
-    delay(1000);
-    sonardist1 = 100;
+    if(val==200&&preloc!=200){
+      insert(201); 
+    }      
+    insert(val);
+  }
+  if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
+    HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
+  }
+  HerkuleX.moveAngle(MOTORID, -30, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
+  delay(1000);
+  sonardist1 = 100;
     
 }
 
