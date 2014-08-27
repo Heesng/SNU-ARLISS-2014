@@ -21,6 +21,7 @@ int center=120;
 int preloc = 200;
 int sonar1 = 49;
 int sonardist1 = 100;
+int offset = 11;
 
 void setup(){ 
   delay(3000);
@@ -62,12 +63,13 @@ void loop(){
   while(sonardist1>5){
     sonardist1 = gpsEx.liftsonar(sonar1);
     val = CTS1.location();
-    if(val!=200){
-      preloc = val;
-    }
-    if(val==200&&preloc!=200){
-      insert(201); 
-    }      
+//    Serial.println(val);
+//    if(val!=200){
+//      preloc = val;
+//    }
+//    if(val==200&&preloc!=200){
+//      insert(201); 
+//    }      
     insert(val);
   }
   if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
@@ -81,47 +83,47 @@ void loop(){
 
 void insert(float rsangle){
   if(-40<rsangle&&rsangle<40){
-    Carsteer.write(90);
+    Carsteer.write(90-offset);
     delay(100);
     analogWrite(motor, 185);
     delay(100);
   }
   else if(40<rsangle&&rsangle<120){
-    Carsteer.write(70);
+    Carsteer.write(70-offset);
     delay(100);
     analogWrite(motor, 175);
     delay(300);
-    Carsteer.write(110);
+    Carsteer.write(110-offset);
     delay(100); 
     analogWrite(motor, 175);
     delay(300);
-    Carsteer.write(90);
+    Carsteer.write(90-offset);
     delay(100);
     analogWrite(motor, 185);
     delay(400);
   }
   else if(-120<rsangle&&rsangle<-40){
-    Carsteer.write(110);
+    Carsteer.write(110-offset);
     delay(100);
     analogWrite(motor, 175);    
     delay(300);
-    Carsteer.write(70);
+    Carsteer.write(70-offset);
     delay(100);
     analogWrite(motor, 175);
     delay(300);
-    Carsteer.write(90);
+    Carsteer.write(90-offset);
     delay(100);
     analogWrite(motor, 185);
     delay(400);    
   }
   else if (rsangle == 200){
-    Carsteer.write(90);
+    Carsteer.write(90-offset);
     delay(100);
     analogWrite(motor, 181);
     delay(100);
   }
   else{
-    Carsteer.write(90);
+    Carsteer.write(90-offset);
     delay(100);
     analogWrite(motor, 175);
     delay(100);
