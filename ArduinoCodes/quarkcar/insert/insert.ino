@@ -1,4 +1,4 @@
-#include<Servo.h>
+ #include<Servo.h>
 #include<CTS.h>
 #include<HerkuleX.h>
 #include<GPS.h>
@@ -85,7 +85,7 @@ void insert(float rsangle){
   if(-40<rsangle&&rsangle<40){
     Carsteer.write(90-offset);
     delay(100);
-    analogWrite(motor, 185);
+    analogWrite(motor, 186);
     delay(100);
   }
   else if(40<rsangle&&rsangle<120){
@@ -99,12 +99,12 @@ void insert(float rsangle){
     delay(300);
     Carsteer.write(90-offset);
     delay(100);
-    analogWrite(motor, 185);
+    analogWrite(motor, 186);
     delay(400);
   }
   else if(-120<rsangle&&rsangle<-40){
     Carsteer.write(110-offset);
-    delay(100);
+    delay(100); 
     analogWrite(motor, 175);    
     delay(300);
     Carsteer.write(70-offset);
@@ -113,7 +113,7 @@ void insert(float rsangle){
     delay(300);
     Carsteer.write(90-offset);
     delay(100);
-    analogWrite(motor, 185);
+    analogWrite(motor, 186);
     delay(400);    
   }
   else if (rsangle == 200){
