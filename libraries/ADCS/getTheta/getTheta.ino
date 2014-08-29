@@ -13,10 +13,8 @@ void setup(){
 void loop(){
 	
 	j = adcs.renew();
-	if(j==1){
-		adcs.control();
-		if(i==0){
-			i = adcs.reelPara();
-		}
-	}
+	int a = adcs.gettheta();
+
+	Serial.println(a);
+	delay(100);
 }

@@ -2,24 +2,29 @@
 #include "ADCS.h"
 
 ADCS::ADCS(){
-	
+	/*
+	//for parachute reeling motor
 	pwmPin1 = 2;
-	enablePin1 = 4;
+	disablePin1 = 4;
 	dirPin1 =3;
 
+	//for attitude controlling motor
 	pwmPin2 = 5;
-	enablePin2 = 7;
+	disablePin2 = 7;
 	dirPin2 = 6;
+	*/
 	
-	/*
+
+	//for parachute reeling motor
 	pwmPin1 = 5;
-	enablePin1 = 7;
+	disablePin1 = 7;
 	dirPin1 =6;
 
+	//for attitude controlling motor
 	pwmPin2 =2;
-	enablePin2 = 4;
+	disablePin2 = 4;
 	dirPin2 = 3;
-	*/
+	
 
 	XAccPin = 0;
 	YAccPin = 1;
@@ -32,13 +37,17 @@ ADCS::ADCS(){
 
 	PGain=6;
 	DGain=0;
+
+	reeltime = 0;
+	reelcheck = 0;
 	
-	pinMode(enablePin1, OUTPUT);
+	pinMode(disablePin1, OUTPUT);
 	pinMode(dirPin1, OUTPUT);
 	pinMode(pwmPin1, OUTPUT);
-	pinMode(enablePin2, OUTPUT);
+	pinMode(disablePin2, OUTPUT);
 	pinMode(dirPin2, OUTPUT);
 	pinMode(pwmPin2, OUTPUT);
+
 }
 
 int ADCS::renew(){
@@ -54,7 +63,12 @@ int ADCS::renew(){
 	theta0 = theta;
 	Serial.println(gettheta());
 
-	if(theta < 95 && theta > 75) return 0;	//when sensor is erect
+	if(millis() > reeltime + 10000 && reelcheck==1){
+		digitalWrite(disablePin1, HIGH);
+	}
+
+	if(theta < 90 && theta > 78) return 0;	//when sensor is erect, 84 is median
+
 	else return 1;
 }
 
@@ -67,8 +81,8 @@ void ADCS::control(){
 	//Attitude Control
 	//Object attitude of 
 	//Enable Motor
-		digitalWrite(enablePin2, LOW);
-		
+		digitalWrite(disablePin2, LOW);
+
 		if(theta>140||theta<-140){
 			theta=140;
 		}
@@ -87,7 +101,7 @@ void ADCS::control(){
 		analogWrite(pwmPin2, wrInt);
 		i = renew();
 	}
-	digitalWrite(enablePin2, HIGH);
+	digitalWrite(disablePin2, HIGH);
 
 }
 
@@ -106,8 +120,8 @@ int ADCS::reelPara(){
 	//Object attitude of 
 	//Enable Motor
 
-	digitalWrite(enablePin1, LOW);
-	
+	digitalWrite(disablePin1, LOW);
+
 	if(theta>140||theta<-140){
 		theta=140;
 	}
@@ -118,13 +132,12 @@ int ADCS::reelPara(){
 		digitalWrite(dirPin1, LOW);
 	}
 
-		analogWrite(pwmPin1, 250);
-		delay(15000);
-		digitalWrite(enablePin1, HIGH);
-
-		return 1;
-	}
-
+	analogWrite(pwmPin1, 250);
+	reeltime = millis();
+	reelcheck = 1;
+	return 1;
+}
 
 
-	float ADCS::gettheta(){return theta;}
+
+float ADCS::gettheta(){return theta;}

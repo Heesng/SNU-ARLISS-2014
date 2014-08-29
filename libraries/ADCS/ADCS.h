@@ -14,11 +14,11 @@ public:
 
 private:
 	int pwmPin1;
-	int enablePin1;
+	int disablePin1;
 	int dirPin1;
 
 	int pwmPin2;
-	int enablePin2;
+	int disablePin2;
 	int dirPin2;
  	//Acclerometer Pin definitions
  	int XAccPin;
@@ -37,6 +37,9 @@ private:
 	int wrInt;
 	int PGain;
 	int DGain;
+
+	long reeltime;
+	int reelcheck;
 };
 
 #endif
