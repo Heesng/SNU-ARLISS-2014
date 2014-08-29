@@ -186,15 +186,18 @@ void go(float destlat,float destlong,float lat,float lng,float heading_){
   if(((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) > 0.00009*0.00009)&&goback){
     analogWrite(motor, 186);
     steer(destlat,destlong,lat,lng,heading_);
+    state = "D";
   }
   else if (goback){
     analogWrite(motor, 181);
     goback = 0;
+    state = "M";
     //steer(destlat,destlong,lat,lng, heading_);
   }
   if(((startlat-lat)*(startlat-lat) + (startlong-lng)*(startlong-lng) > 0.00009*0.00009)&&goback==0){
     analogWrite(motor, 186);
     steer(startlat,startlong,lat,lng,heading_);
+    state = "R";
   } 
   else if (goback == 0){
     analogWrite(motor, 181);
