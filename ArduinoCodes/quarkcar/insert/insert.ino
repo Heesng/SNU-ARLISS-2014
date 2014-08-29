@@ -1,4 +1,4 @@
- #include<Servo.h>
+#include<Servo.h>
 #include<CTS.h>
 #include<HerkuleX.h>
 #include<GPS.h>
@@ -24,7 +24,7 @@ int offset = 11;
 
 void setup(){ 
   delay(3000);
-//  Serial.begin(9600);
+  //Serial.begin(9600);
   HerkuleX.begin(57600, RX, TX);  
   delay(10);
   // Torque ON
