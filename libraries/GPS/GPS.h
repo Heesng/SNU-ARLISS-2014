@@ -15,7 +15,6 @@ public:
   int renew();
   long liftsonar(int pinnum);
 
-  
   double getLat();
   double getLng();
   double getHgt();
@@ -33,7 +32,7 @@ private:
   String getLat(String Buf);
   String getLong(String Buf);
   String getHigh(String Buf);
-  void StoF();
+  int StoF();
   int spellCheck(String Buf);
   
   String GPSBuf; //Whole GPS data buffer

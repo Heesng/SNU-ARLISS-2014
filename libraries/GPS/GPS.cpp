@@ -9,6 +9,8 @@ GPS::GPS(){
   sLatitude = "0";
   sLongitude = "0";
   sHeight = "0";
+  count = 0;
+  deltaH = 1000;
 }
 
 int GPS::renew(){
@@ -28,9 +30,13 @@ int GPS::renew(){
     if(a == 0) sLatitude = tempLat;
     if(b == 0) sLongitude = tempLng;
     if(c == 0) sHeight = temphgt;
-    StoF();
-    return 1;
-
+    int r = StoF();
+    
+    if(r==0){
+      count ++;
+      return 1;
+    }
+    else if(r==-1) {return 0;}
   }
 }
 
@@ -38,7 +44,6 @@ int GPS::renew(){
     long duration = pulseIn(pinnum,LOW);
     return duration*170/10000;
   }
-
 
   double GPS::getLat(){return latitude;}
   double GPS::getLng(){return longitude;}
@@ -143,29 +148,38 @@ String GPS::getHigh(String Buf){
   }
 }
 
-void GPS::StoF(){
+int GPS::StoF(){
   char buf0[sLatitude.length()];
   char buf1[sLongitude.length()];
   char buf2[sHeight.length()];
   float temp;
+  float htemp;
 
   if(sLatitude.length() != 0)
   {
     sLatitude.toCharArray(buf0,sLatitude.length());
-    latitude = atof(buf0); 
+    temp = atof(buf0);
+    if(temp != 0.0) {latitude = temp;}
 
     sLongitude.toCharArray(buf1,sLongitude.length());
-    longitude = atof(buf1); 
+    temp = atof(buf1);
+    if(temp != 0.0) {longitude = temp;}
 
     sHeight.toCharArray(buf2,sHeight.length());
-    temp = height;
-    height = atof(buf2);
-    deltaH = height - temp; 
+    htemp = height;
+    temp = atof(buf2);
+    if(temp != 0.0) {height = temp;}
+    
+    deltaH = height - htemp;
+
+    return 0;
   }
   else{
     latitude = 0;
     longitude = 0;
     height = 0;
+
+    return -1;
   }
 }
 
@@ -174,11 +188,10 @@ int GPS::spellCheck(String Buf){
   int n = Buf.length();
   int i = 0;
   char c;
-  int result = 0;
 
   while(i<n){
     c = Buf.charAt(i);
-    if(('0'>c || c>'9')&&c!='.'){return -1;}
+    if((c < '0' || c > '9') && c!='.'){return -1;}
     i++;
   }
   return 0;
