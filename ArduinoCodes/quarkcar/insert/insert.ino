@@ -58,13 +58,13 @@ void loop(){
   int i = 0;
   Camera.write(90);
   delay(100);
-  sonardist1 = gpsEx.liftsonar(sonar1);
-  if(sonardist1 == 200){
-    for(i = 0;i<180;i++){
+  val = CTS1.location();
+  if(val == 200){
+    for(i = 0;i<181;i++){
       Camera.write(i);
-      sonardist1 = gpsEx.liftsonar(sonar1);
+      val = CTS1.location();
       delay(100); 
-      if(sonardist1 != 200){
+      if(val != 200){
         break;
       }
     }
@@ -80,7 +80,7 @@ void loop(){
       Carsteer.write(90-offset);
       delay(100);
     }
-    else if(90<=i&&i<180){
+    else if(90<=i&&i<=180){
       Carsteer.write(70-offset);
       delay(100); 
       analogWrite(motor, 175);    
@@ -106,9 +106,10 @@ void loop(){
     HerkuleX.moveAngle(MOTORID, 150, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
     delay(1000);
     while(sonardist1>5){
-      sonardist1 = gpsEx.liftsonar(sonar1);
+      Camera.write(90);
       val = CTS1.location();
       insert(val);
+      sonardist1 = gpsEx.liftsonar(sonar1);
     }
     if (HerkuleX.getStatus(MOTORID) != HERKULEX_STATUS_OK) {
       HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
