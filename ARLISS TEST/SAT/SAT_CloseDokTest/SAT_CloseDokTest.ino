@@ -27,7 +27,7 @@ int distance(GPS gps_);
 int a,g=0, r=0; //adcs,gps,rfrcv
 int P=0; //Parachute, Docking
 float dHgt=10;
-long rftime = 0;
+long rfTime = 0;
 
 String state = "";
 String rcvPck = "";
@@ -177,7 +177,7 @@ void mergeData(String module_, String state_, String slat_, String slng_, String
 	String sT = String(T);
 
 	rfData = sT +"," +module_ +"," +state_ +"," + slat_ +"," + slng_ +"," + shgt_ +"," + sheading_;
-	sdData = sT +"\t"module_ +"\t"+state_ +"\t"+ slat_ +"\t"+ slng_ +"\t"+ shgt_ +"\t"+ sheading_;
+	sdData = sT +"\t"+module_ +"\t"+state_ +"\t"+ slat_ +"\t"+ slng_ +"\t"+ shgt_ +"\t"+ sheading_;
 }
 
 int readPck(String pck_){

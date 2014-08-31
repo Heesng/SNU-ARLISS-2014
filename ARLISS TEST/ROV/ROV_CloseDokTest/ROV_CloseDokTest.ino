@@ -36,6 +36,7 @@ float Pgain = 1, Dgain, Igain;
 float osteer;
 int motor = 2;
 int r=0,g,d;
+long rfTime = 0;
 
 String sHeading;
 char Buffer[5];
@@ -278,12 +279,13 @@ void mergeData(String module_, String state_, String slat_, String slng_, String
   String sT = String(T);
 
   rfData = sT +"," +module_ +"," +state_ +"," + slat_ +"," + slng_ +"," + shgt_ +"," + sheading_;
-  sdData = sT +"\t"module_ +"\t"+state_ +"\t"+ slat_ +"\t"+ slng_ +"\t"+ shgt_ +"\t"+ sheading_;
+  sdData = sT +"\t"+module_ +"\t"+state_ +"\t"+ slat_ +"\t"+ slng_ +"\t"+ shgt_ +"\t"+ sheading_;
 }
 
 int readPck(String pck_){
 
   char comma = ',';
+  float temp;
 
   int i = pck_.indexOf(comma);//skip the time
   i = pck_.indexOf(comma,i+1);
