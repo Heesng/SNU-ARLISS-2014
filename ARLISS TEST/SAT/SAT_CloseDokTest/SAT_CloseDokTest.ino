@@ -27,7 +27,6 @@ int distance(GPS gps_);
 int a,g=0, r=0; //adcs,gps,rfrcv
 int P=0; //Parachute, Docking
 float dHgt=10;
-int dist = 1;
 long rftime = 0;
 
 String state = "";
@@ -82,16 +81,17 @@ void setup(){
 	/*
 	wait until gps get coordinate
 	*/
-
 	while(g != 1){
 		g = gps.renew();
+		compassRenew(); //compass renew
+
 		mergeData(module,state,gps.getSLat(),gps.getSLng(),gps.getSHgt(),sHeading);
 		Serial.println(rfData);
 		sdWrite(sdData);
 		dHgt = gps.getDeltaH();
 
 		delay(500);
-		}
+	}
 }
 
 void loop(){
@@ -110,7 +110,7 @@ void loop(){
 	}
 
 	//////////////////////Falling mode/////////////////
-	if(dHgt>3 || gps.count<120 )
+	if(dHgt>2 || gps.count<120 )
 	{
 		state = "F";
 		if(g==1){
@@ -130,10 +130,9 @@ void loop(){
 				adcs.reelPara();
 				P=1;
 			}
-
 		}
 
-		if(g==1 && millis() > rfTime + 10000){
+		if(millis() > rfTime + 10000){
 			rf.sendPck(rfData);
 			rfTime = millis();
 		}
@@ -144,10 +143,9 @@ void loop(){
 	{
 		state = "D";
 
-		if(g==1 && gps.count>=5){
+		if(millis() > rfTime + 5000){
 			rf.sendPck(rfData);
 			rfTime = millis();
-
 		}
 	}
 }
@@ -174,70 +172,75 @@ int distance(GPS gps_){
 }
 
 void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_){
-  rfData = module_ +"," +state_ +"," + slat_ +"," + slng_ +"," + shgt_ +"," + sheading_;
-  sdData = module_ +"\t"+state_ +"\t"+ slat_ +"\t"+ slng_ +"\t"+ shgt_ +"\t"+ sheading_;
+
+	long T = millis();
+	String sT = String(T);
+
+	rfData = sT +"," +module_ +"," +state_ +"," + slat_ +"," + slng_ +"," + shgt_ +"," + sheading_;
+	sdData = sT +"\t"module_ +"\t"+state_ +"\t"+ slat_ +"\t"+ slng_ +"\t"+ shgt_ +"\t"+ sheading_;
 }
 
 int readPck(String pck_){
 
-  char comma = ',';
-  float temp;
+	char comma = ',';
+	float temp;
 
-  int i = pck_.indexOf(comma);
-  rmodule = pck_.substring(0,i);
+	int i = pck_.indexOf(comma);//skip the time
+	i = pck_.indexOf(comma,i+1);
+	rmodule = pck_.substring(0,i);
 
-  int j = pck_.indexOf(comma,i+1);
-  rstate = pck_.substring(i+1,j);
+	int j = pck_.indexOf(comma,i+1);
+	rstate = pck_.substring(i+1,j);
 
-  i = pck_.indexOf(comma,j+1);
-  rslat = pck_.substring(j+1,i);
+	i = pck_.indexOf(comma,j+1);
+	rslat = pck_.substring(j+1,i);
 
-  j= pck_.indexOf(comma,i+1);
-  rslng = pck_.substring(i+1,j);
+	j= pck_.indexOf(comma,i+1);
+	rslng = pck_.substring(i+1,j);
 
-  i = pck_.indexOf(comma,j+1);
-  rshgt = pck_.substring(j+1,i);
+	i = pck_.indexOf(comma,j+1);
+	rshgt = pck_.substring(j+1,i);
 
-  j= pck_.indexOf(comma,i+1);
-  rsheading = pck_.substring(i+1,j);
+	j= pck_.indexOf(comma,i+1);
+	rsheading = pck_.substring(i+1,j);
 
-  char buf0[rslat.length()];
-  char buf1[rslng.length()];
-  char buf2[rshgt.length()];
-  char buf3[rsheading.length()];
+	char buf0[rslat.length()];
+	char buf1[rslng.length()];
+	char buf2[rshgt.length()];
+	char buf3[rsheading.length()];
 
-  if(rslat.length() != 0)
-  {
-  	rslat.toCharArray(buf0,rslat.length());
-  	temp = atof(buf0);
-  	if(temp != 0.0) {rlat = temp;}
+	if(rslat.length() != 0)
+	{
+		rslat.toCharArray(buf0,rslat.length());
+		temp = atof(buf0);
+		if(temp != 0.0) {rlat = temp;}
 
-    rslng.toCharArray(buf1,rslng.length());
-    temp = atof(buf1);
-    if(temp != 0.0) {rlng = temp;} 
+		rslng.toCharArray(buf1,rslng.length());
+		temp = atof(buf1);
+		if(temp != 0.0) {rlng = temp;} 
 
 
-    rshgt.toCharArray(buf2,rshgt.length());
-    temp = atof(buf2);
-    if(temp != 0.0) {rhgt = temp;}
+		rshgt.toCharArray(buf2,rshgt.length());
+		temp = atof(buf2);
+		if(temp != 0.0) {rhgt = temp;}
 
-    rsheading.toCharArray(buf2,rsheading.length());
-    temp = atof(buf3);
-  	if(temp != 0.0) {rheading = temp;}
+		rsheading.toCharArray(buf2,rsheading.length());
+		temp = atof(buf3);
+		if(temp != 0.0) {rheading = temp;}
 
-    return 0;
-  }
+		return 0;
+	}
 
-  else{
-    rlat = 0;
-    rlng = 0;
-    rhgt = 0;
-    return -1;
-  }
+	else{
+		rlat = 0;
+		rlng = 0;
+		rhgt = 0;
+		return -1;
+	}
 }
 
 void compassRenew(){
-  Wire.beginTransmission(SlaveAddress);
+	Wire.beginTransmission(SlaveAddress);
   Wire.write(ReadAddress);              // The "Get Data" command
   Wire.endTransmission();
 
