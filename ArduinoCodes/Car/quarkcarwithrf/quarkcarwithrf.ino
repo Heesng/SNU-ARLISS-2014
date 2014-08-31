@@ -85,9 +85,9 @@ void setup(){
   compass.init();
   compass.enableDefault();  
   compass.m_min = (LSM303::vector<int16_t>){
-    -703,-737, -746  };
+      -525,   -484,   -381  };
     compass.m_max = (LSM303::vector<int16_t>){
-      +695, +461, +635  };
+       +461,   +409,   +359 };
 
   /*
   Driving setting
