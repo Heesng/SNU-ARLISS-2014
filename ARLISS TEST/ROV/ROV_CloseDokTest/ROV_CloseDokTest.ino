@@ -160,7 +160,7 @@ void loop(){
   
   r = rf.receivePck(rcvPck);
   Serial.println(rcvPck);
-  if(r==0){
+  if(r==1){
     readPck(rcvPck);
     Serial.print("module: ");
     Serial.println(rmodule);

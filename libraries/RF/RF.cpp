@@ -59,7 +59,7 @@ int RF::receivePck(String & A)
           cs_[0] = chescksum & 0xFF;
           cs_[1] = (chescksum >> 8) & 0xFF;
 
-          if(cs[0] == cs_[0] && cs[1]==cs_[1]) return 0; //received without noise
+          if(cs[0] == cs_[0] && cs[1]==cs_[1]){return 0;} //received without noise
           else {
             A = temp;
             return -1;

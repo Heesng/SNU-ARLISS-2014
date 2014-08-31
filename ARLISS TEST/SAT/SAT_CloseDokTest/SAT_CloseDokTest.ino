@@ -148,6 +148,18 @@ void loop(){
 			rfTime = millis();
 		}
 	}
+
+	//////////////////etc mode///////////////
+	else{
+		state = "E";
+		if(millis() > rfTime + 5000){
+			rf.sendPck(rfData);
+			rfTime = millis();
+		}
+
+
+
+	}
 }
 
 void sdWrite(String dataString){
