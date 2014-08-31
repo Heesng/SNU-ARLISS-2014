@@ -27,8 +27,8 @@ GPS gpsEx;
 Servo Carsteer;
 LSM303 compass;
 int goback = 1;
-float startlat = 37.276210;
-float startlong = 126.570167;
+float startlat = 37.275291;
+float startlong = 126.569122;
 float lat;
 float lng;
 float steer_car,dsteer_car,isteer_car = 0, steer_car0;
@@ -136,9 +136,12 @@ void loop(){
   go(rlat,rlng,lat,lng, heading_);
 //  dataString += "	";
 //  dataString += String((int)osteer);
-//  Serial.println(lat,6);
-//  Serial.println(lng,6);
-//  Serial.println(heading_);
+  Serial.println("lat");
+  Serial.println(lat,6);
+  Serial.println("lng");
+  Serial.println(lng,6);
+  Serial.println("heading");
+  Serial.println(heading_);
   //steer(destlat,destlong,lat,lng,heading_);
 //  Serial.println("e");
 //  File dataFile = SD.open("datalog.txt", FILE_WRITE);
@@ -195,7 +198,7 @@ void go(float destlat,float destlong,float lat,float lng,float heading_){
     //steer(destlat,destlong,lat,lng, heading_);
   }
   if(((startlat-lat)*(startlat-lat) + (startlong-lng)*(startlong-lng) > 0.00009*0.00009)&&goback==0){
-    analogWrite(motor, 186);
+    analogWrite(motor, 181);
     steer(startlat,startlong,lat,lng,heading_);
     state = "R";
   } 
@@ -208,7 +211,7 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   float dy = destlat - flatitude;
   float dx = cos(flatitude*3.141592/180)*(destlong-flongitude);
   float angle = atan(dy/dx)*180/3.141592;
-  float offset = 11;
+  float offset = 0;
   //float dsx = cos(satheading*3.14/180);
   //float dsy = sin(satheading*3.14/180);
   //int power = 0;//1/((destlat-flatitude)*(destlat-flatitude)+(destlong-flongitude)*(destlong-flongitude));
@@ -225,11 +228,14 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   else if((dy<0)&&(dx<0)){
     angle = 270 - angle;
   }
+  else{}
   
+  Serial.println("angle");
   Serial.println(angle);
   
   steer_car = angle - heading_;
   //steer_car = steer_car + 40;
+  Serial.println("steercar");
   Serial.println(steer_car);  
   
   float psteer_car = steer_car;
@@ -269,6 +275,7 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   Carsteer.write(osteer);
   //osteer = 79; - > offset정중
   //delay(1000);
+  Serial.println("osteer");
   Serial.println(osteer);
   //dataString += String((int)osteer);
 }
