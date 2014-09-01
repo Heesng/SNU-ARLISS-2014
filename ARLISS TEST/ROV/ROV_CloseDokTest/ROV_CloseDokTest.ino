@@ -115,20 +115,20 @@ void loop(){
     g = gpsEx.renew();
   //}
 //  Serial.println("a");
-  
-    lat = gpsEx.getLat()/100;
-    lng = gpsEx.getLng()/100;
-  
+
+lat = gpsEx.getLat()/100;
+lng = gpsEx.getLng()/100;
+
 //  dataString += String((long)(lat*1000000));
 //  dataString += "	";
 //  dataString += String((long)(lng*1000000));
   //double satheading = 0;//rf.getheading();
   //for compass sensor
 //  Serial.println("b");
-  compass.read();
+compass.read();
 //  Serial.println("c");
-  float heading_ = compass.heading((LSM303::vector<int>){0,1,0});
-  sHeading = dtostrf(heading_,1,1,Buffer);
+float heading_ = compass.heading((LSM303::vector<int>){0,1,0});
+sHeading = dtostrf(heading_,1,1,Buffer);
 //  dataString += "	";
 //  dataString += String((int)(heading_*10));
 //  Serial.println("d");
@@ -136,12 +136,12 @@ void loop(){
   go(rlat,rlng,lat,lng, heading_);
 //  dataString += "	";
 //  dataString += String((int)osteer);
-  Serial.println("lat");
-  Serial.println(lat,6);
-  Serial.println("lng");
-  Serial.println(lng,6);
-  Serial.println("heading");
-  Serial.println(heading_);
+Serial.println("lat");
+Serial.println(lat,6);
+Serial.println("lng");
+Serial.println(lng,6);
+Serial.println("heading");
+Serial.println(heading_);
   //steer(destlat,destlong,lat,lng,heading_);
 //  Serial.println("e");
 //  File dataFile = SD.open("datalog.txt", FILE_WRITE);
@@ -158,25 +158,25 @@ void loop(){
     mergeData(module,state,gpsEx.getSLat(),gpsEx.getSLng(),gpsEx.getSHgt(),sHeading);
     rf.sendPck(rfData);
   }
-*/
+  */
 //  Serial.println("f");
-  
-  r = rf.receivePck(rcvPck);
-  Serial.println(rcvPck);
-  if(r==1){
-    readPck(rcvPck);
-    Serial.print("module: ");
-    Serial.println(rmodule);
-    Serial.print("state: ");
-    Serial.println(rstate);
-    Serial.print("latitude: ");
-    Serial.println(rslat);
-    Serial.print("longitude: ");
-    Serial.println(rslng);
-    Serial.print("height: ");
-    Serial.println(rshgt);
-    Serial.print("heading: ");
-    Serial.println(rsheading);
+
+r = rf.receivePck(rcvPck);
+Serial.println(rcvPck);
+if(r==1){
+  readPck(rcvPck);
+  Serial.print("module: ");
+  Serial.println(rmodule);
+  Serial.print("state: ");
+  Serial.println(rstate);
+  Serial.print("latitude: ");
+  Serial.println(rslat);
+  Serial.print("longitude: ");
+  Serial.println(rslng);
+  Serial.print("height: ");
+  Serial.println(rshgt);
+  Serial.print("heading: ");
+  Serial.println(rsheading);
   }  // if the file isn't open, pop up an error:
 //  else {
 //    Serial.println("error opening datalog.txt");
@@ -216,23 +216,23 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   //float dsy = sin(satheading*3.14/180);
   //int power = 0;//1/((destlat-flatitude)*(destlat-flatitude)+(destlong-flongitude)*(destlong-flongitude));
   // float angle = atan((dy+power*dsy)/(dx+power*dsx))*180/3.141592;
-  if((dy>0)&&(dx>0)){
+  if( dy>=0 &&d x>=0 ){
     angle = 90 - angle;
   }
-  else if((dy>0)&&(dx<0)){
+  else if( dy>=0 && dx<0 ){
     angle = 270 - angle;
   }
-  else if((dy<0)&&(dx>0)){
+  else if(dy<0 && dx>=0){
     angle = 90 - angle;
   }
-  else if((dy<0)&&(dx<0)){
-    angle = 270 - angle;
+  else// if((dy<0)&&(dx<0)){
+  {
+      angle = 270 - angle;
   }
-  else{}
-  
+
   Serial.println("angle");
   Serial.println(angle);
-  
+
   steer_car = angle - heading_;
   //steer_car = steer_car + 40;
   Serial.println("steercar");
@@ -294,11 +294,11 @@ int readPck(String pck_){
   char comma = ',';
   float temp;
 
-  int i = pck_.indexOf(comma);//skip the time
-  i = pck_.indexOf(comma,i+1);
-  rmodule = pck_.substring(0,i);
+  int j = pck_.indexOf(comma);//skip the time
+  int i = pck_.indexOf(comma,j+1);
+  rmodule = pck_.substring(j+1,i);
 
-  int j = pck_.indexOf(comma,i+1);
+  j = pck_.indexOf(comma,i+1);
   rstate = pck_.substring(i+1,j);
 
   i = pck_.indexOf(comma,j+1);

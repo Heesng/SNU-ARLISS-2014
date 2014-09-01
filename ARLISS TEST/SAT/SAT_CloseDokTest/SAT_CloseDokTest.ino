@@ -120,7 +120,7 @@ void loop(){
 	}
 
 	//////////////////////Landing mode/////////////////
-	else if(rstate == "" || rstate =="D" || rstate == "M")
+	else if(rsate == " " || rstate == "" || rstate =="D" || rstate == "M")
 	{
 		state = "L";
 		
@@ -156,9 +156,6 @@ void loop(){
 			rf.sendPck(rfData);
 			rfTime = millis();
 		}
-
-
-
 	}
 }
 
@@ -194,62 +191,63 @@ void mergeData(String module_, String state_, String slat_, String slng_, String
 
 int readPck(String pck_){
 
-	char comma = ',';
-	float temp;
+  char comma = ',';
+  float temp;
 
-	int i = pck_.indexOf(comma);//skip the time
-	i = pck_.indexOf(comma,i+1);
-	rmodule = pck_.substring(0,i);
+  int j = pck_.indexOf(comma);//skip the time
+  int i = pck_.indexOf(comma,j+1);
+  rmodule = pck_.substring(j+1,i);
 
-	int j = pck_.indexOf(comma,i+1);
-	rstate = pck_.substring(i+1,j);
+  j = pck_.indexOf(comma,i+1);
+  rstate = pck_.substring(i+1,j);
 
-	i = pck_.indexOf(comma,j+1);
-	rslat = pck_.substring(j+1,i);
+  i = pck_.indexOf(comma,j+1);
+  rslat = pck_.substring(j+1,i);
 
-	j= pck_.indexOf(comma,i+1);
-	rslng = pck_.substring(i+1,j);
+  j= pck_.indexOf(comma,i+1);
+  rslng = pck_.substring(i+1,j);
 
-	i = pck_.indexOf(comma,j+1);
-	rshgt = pck_.substring(j+1,i);
+  i = pck_.indexOf(comma,j+1);
+  rshgt = pck_.substring(j+1,i);
 
-	j= pck_.indexOf(comma,i+1);
-	rsheading = pck_.substring(i+1,j);
+  j= pck_.indexOf(comma,i+1);
+  rsheading = pck_.substring(i+1,j);
 
-	char buf0[rslat.length()];
-	char buf1[rslng.length()];
-	char buf2[rshgt.length()];
-	char buf3[rsheading.length()];
+  char buf0[rslat.length()];
+  char buf1[rslng.length()];
+  char buf2[rshgt.length()];
+  char buf3[rsheading.length()];
 
-	if(rslat.length() != 0)
-	{
-		rslat.toCharArray(buf0,rslat.length());
-		temp = atof(buf0);
-		if(temp != 0.0) {rlat = temp;}
+  if(rslat.length() != 0)
+  {
+    rslat.toCharArray(buf0,rslat.length());
+    temp = atof(buf0);
+    if(temp != 0.0) {rlat = temp;}
 
-		rslng.toCharArray(buf1,rslng.length());
-		temp = atof(buf1);
-		if(temp != 0.0) {rlng = temp;} 
+    rslng.toCharArray(buf1,rslng.length());
+    temp = atof(buf1);
+    if(temp != 0.0) {rlng = temp;} 
 
 
-		rshgt.toCharArray(buf2,rshgt.length());
-		temp = atof(buf2);
-		if(temp != 0.0) {rhgt = temp;}
+    rshgt.toCharArray(buf2,rshgt.length());
+    temp = atof(buf2);
+    if(temp != 0.0) {rhgt = temp;}
 
-		rsheading.toCharArray(buf2,rsheading.length());
-		temp = atof(buf3);
-		if(temp != 0.0) {rheading = temp;}
+    rsheading.toCharArray(buf2,rsheading.length());
+    temp = atof(buf3);
+    if(temp != 0.0) {rheading = temp;}
 
-		return 0;
-	}
+    return 0;
+  }
 
-	else{
-		rlat = 0;
-		rlng = 0;
-		rhgt = 0;
-		return -1;
-	}
+  else{
+    rlat = 0;
+    rlng = 0;
+    rhgt = 0;
+    return -1;
+  }
 }
+
 
 void compassRenew(){
 	Wire.beginTransmission(SlaveAddress);
