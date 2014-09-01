@@ -216,13 +216,13 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   //float dsy = sin(satheading*3.14/180);
   //int power = 0;//1/((destlat-flatitude)*(destlat-flatitude)+(destlong-flongitude)*(destlong-flongitude));
   // float angle = atan((dy+power*dsy)/(dx+power*dsx))*180/3.141592;
-  if( dy>=0 &&d x>=0 ){
+  if( dy>=0 && dx>=0 ){
     angle = 90 - angle;
   }
-  else if( dy>=0 && dx<0 ){
+  else if( dy>=0 && dx < 0 ){
     angle = 270 - angle;
   }
-  else if(dy<0 && dx>=0){
+  else if(dy < 0 && dx >= 0){
     angle = 90 - angle;
   }
   else// if((dy<0)&&(dx<0)){
