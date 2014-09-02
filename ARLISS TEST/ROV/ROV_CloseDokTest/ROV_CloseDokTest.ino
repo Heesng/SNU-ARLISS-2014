@@ -27,8 +27,8 @@ GPS gpsEx;
 Servo Carsteer;
 LSM303 compass;
 int goback = 1;
-float startlat = 37.275291;
-float startlong = 126.569122;
+float destlat = 37.275291;
+float destlong = 126.569122;
 float lat;
 float lng;
 float steer_car,dsteer_car,isteer_car = 0, steer_car0;
@@ -72,7 +72,7 @@ void setup(){
   /*
   SDcard setting
   */
-  pinMode(10, OUTPUT);
+  //pinMode(10, OUTPUT);
 //  if (!SD.begin(chipSelect)) {
 //    return;
 //  } 
@@ -133,7 +133,7 @@ sHeading = dtostrf(heading_,1,1,Buffer);
 //  dataString += String((int)(heading_*10));
 //  Serial.println("d");
   //float sheading_ = 0;
-  go(rlat,rlng,lat,lng, heading_);
+  go(destlat,destlong,lat,lng, heading_);
 //  dataString += "	";
 //  dataString += String((int)osteer);
 Serial.println("lat");
@@ -197,14 +197,14 @@ void go(float destlat,float destlong,float lat,float lng,float heading_){
     state = "M";
     //steer(destlat,destlong,lat,lng, heading_);
   }
-  if(((startlat-lat)*(startlat-lat) + (startlong-lng)*(startlong-lng) > 0.00009*0.00009)&&goback==0){
-    analogWrite(motor, 181);
-    steer(startlat,startlong,lat,lng,heading_);
-    state = "R";
-  } 
-  else if (goback == 0){
-    analogWrite(motor, 181);
-  }
+//  if(((startlat-lat)*(startlat-lat) + (startlong-lng)*(startlong-lng) > 0.00009*0.00009)&&goback==0){
+//    analogWrite(motor, 181);
+//    steer(startlat,startlong,lat,lng,heading_);
+//    state = "R";
+//  } 
+//  else if (goback == 0){
+//    analogWrite(motor, 181);
+//  }
 }
 
 void steer(float destlat,float destlong,float flatitude,float flongitude, float heading_){
