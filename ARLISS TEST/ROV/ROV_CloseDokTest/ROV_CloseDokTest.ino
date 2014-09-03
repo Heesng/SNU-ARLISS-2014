@@ -227,7 +227,7 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   }
   else// if((dy<0)&&(dx<0)){
   {
-      angle = 270 - angle;
+    angle = 270 - angle;
   }
 
   Serial.println("angle");
