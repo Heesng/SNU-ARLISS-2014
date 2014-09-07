@@ -72,7 +72,7 @@ void setup(){
   /*
   SDcard setting
   */
-  //pinMode(10, OUTPUT);
+//  pinMode(10, OUTPUT);
 //  if (!SD.begin(chipSelect)) {
 //    return;
 //  } 
@@ -80,13 +80,13 @@ void setup(){
   /*
   Compass setting
   */
-  Wire.begin();
+  Wire.begin(); 
   compass.init();
   compass.enableDefault();  
   compass.m_min = (LSM303::vector<int16_t>){
-    -703,-737, -746  };
+        -104,  -4096,   -642  };
     compass.m_max = (LSM303::vector<int16_t>){
-      +695, +461, +635  };
+         +1016,   +545,   +381 };
 
   /*
   Driving setting
@@ -122,13 +122,14 @@ lng = gpsEx.getLng()/100;
 //  dataString += String((long)(lat*1000000));
 //  dataString += "	";
 //  dataString += String((long)(lng*1000000));
-  //double satheading = 0;//rf.getheading();
+  double satheading = 0;//rf.getheading();
   //for compass sensor
 //  Serial.println("b");
-compass.read();
+  compass.read();
+  delay(10);
 //  Serial.println("c");
-float heading_ = compass.heading((LSM303::vector<int>){0,1,0});
-sHeading = dtostrf(heading_,1,1,Buffer);
+  float heading_ = compass.heading((LSM303::vector<int>){0,1,0});
+  sHeading = dtostrf(heading_,1,1,Buffer);
 //  dataString += "	";
 //  dataString += String((int)(heading_*10));
 //  Serial.println("d");
@@ -210,25 +211,25 @@ void go(float destlat,float destlong,float lat,float lng,float heading_){
 void steer(float destlat,float destlong,float flatitude,float flongitude, float heading_){
   float dy = destlat - flatitude;
   float dx = cos(flatitude*3.141592/180)*(destlong-flongitude);
-  float angle = atan(dy/dx)*180/3.141592;
+  float angle = atan2(dy,dx)*180/3.141592;
   float offset = 0;
   //float dsx = cos(satheading*3.14/180);
   //float dsy = sin(satheading*3.14/180);
   //int power = 0;//1/((destlat-flatitude)*(destlat-flatitude)+(destlong-flongitude)*(destlong-flongitude));
   // float angle = atan((dy+power*dsy)/(dx+power*dsx))*180/3.141592;
-  if( dy>=0 && dx>=0 ){
-    angle = 90 - angle;
-  }
-  else if( dy>=0 && dx < 0 ){
-    angle = 270 - angle;
-  }
-  else if(dy < 0 && dx >= 0){
-    angle = 90 - angle;
-  }
-  else// if((dy<0)&&(dx<0)){
-  {
-    angle = 270 - angle;
-  }
+//  if( dy>=0 && dx>=0 ){
+//    angle = 90 - angle;
+//  }
+//  else if( dy>=0 && dx < 0 ){
+//    angle = 270 - angle;
+//  }
+//  else if(dy < 0 && dx >= 0){
+//    angle = 90 - angle;
+//  }
+//  else// if((dy<0)&&(dx<0)){
+//  {
+//    angle = 270 - angle;
+//  }
 
   Serial.println("angle");
   Serial.println(angle);
