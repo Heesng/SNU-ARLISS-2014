@@ -27,7 +27,7 @@ int GPS::renew(){
     int b = spellCheck(tempLng);
     int c = spellCheck(temphgt);
 
-    if(a == 0) sLatitude = tempLat;
+    if(a == 0) {sLatitude = tempLat;}
     if(b == 0) sLongitude = tempLng;
     if(c == 0) sHeight = temphgt;
     int r = StoF();
@@ -40,19 +40,19 @@ int GPS::renew(){
   }
 }
 
-  long GPS::liftsonar(int pinnum){
-    long duration = pulseIn(pinnum,LOW);
-    return duration*170/10000;
-  }
+long GPS::liftsonar(int pinnum){
+  long duration = pulseIn(pinnum,LOW);
+  return duration*170/10000;
+}
 
-  double GPS::getLat(){return latitude;}
-  double GPS::getLng(){return longitude;}
-  double GPS::getHgt(){return height;}
-  double GPS::getDeltaH(){return deltaH;}
+double GPS::getLat(){return latitude;}
+double GPS::getLng(){return longitude;}
+double GPS::getHgt(){return height;}
+double GPS::getDeltaH(){return deltaH;}
 
-  String GPS::getSLat(){return sLatitude;}
-  String GPS::getSLng(){return sLongitude;}
-  String GPS::getSHgt(){return sHeight;}
+String GPS::getSLat(){return sLatitude;}
+String GPS::getSLng(){return sLongitude;}
+String GPS::getSHgt(){return sHeight;}
 
 
 
@@ -168,9 +168,12 @@ int GPS::StoF(){
     sHeight.toCharArray(buf2,sHeight.length());
     htemp = height;
     temp = atof(buf2);
-    if(temp != 0.0) {height = temp;}
+    if(temp != 0.0) {
+      height = temp;
+      deltaH = height - htemp;
+
+    }
     
-    deltaH = height - htemp;
 
     return 0;
   }
