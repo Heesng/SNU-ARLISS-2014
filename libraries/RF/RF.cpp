@@ -17,13 +17,23 @@ void RF::sendPck(String A)
   A = "SNU" + A + cs[0] + cs[1];
 //  Serial.println(A);
 
-  Serial1.write(0xFF);
-  Serial1.write(0xFF);
-  Serial1.write(0xFF);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
+  Serial1.println(A);
 
-  Serial1.println(A);
-  Serial1.println(A);
-  Serial1.println(A);
 }
 
 int RF::receivePck(String & A)
