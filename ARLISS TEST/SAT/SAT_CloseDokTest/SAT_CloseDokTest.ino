@@ -11,10 +11,9 @@ GPS gps;
 RF rf;
 
 String module = "S";
-int chipSelect = 8;
+const int chipSelect = 8;
 
 int ledPin1 = 9;
-int ledPin3 = 11;
 int ledpin5 = 13;
 
 
@@ -120,7 +119,7 @@ void loop(){
 	}
 
 	//////////////////////Landing mode/////////////////
-	else if(rsate == " " || rstate == "" || rstate =="D" || rstate == "M")
+	else if(rstate == " " || rstate == "" || rstate =="D" || rstate == "M")
 	{
 		state = "L";
 		
@@ -160,15 +159,12 @@ void loop(){
 }
 
 void sdWrite(String dataString){
-	File dataFile = SD.open("datalog.txt", FILE_WRITE);
+	File dataFile = SD.open("SAT140907.txt", FILE_WRITE);
 
  	 // if the file is available, write to it:
  	 if(dataFile){
  	 	dataFile.println(dataString);
  	 	dataFile.close();
-
-    	// print to the serial port too:
-    	Serial.println(dataString);
     }
 }
 
