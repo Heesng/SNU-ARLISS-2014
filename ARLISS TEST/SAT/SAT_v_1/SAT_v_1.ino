@@ -13,8 +13,8 @@ DCS dcs;
 GPS gps;
 RF rf;
 
-const String module = "S";
-const int chipSelect = 9;
+String module = "S";
+int chipSelect = 8;
 
 void sdWrite(String dataString);
 float distance(GPS gps_, DCS dcs_);

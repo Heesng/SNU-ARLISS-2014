@@ -13,9 +13,9 @@ DCS dcs;
 GPS gps;
 RF rf;
 
-const String module = "S";
-const int chipSelect = 9;
-const int ledPin = 22;
+String module = "S";
+int chipSelect = 8;
+int ledPin = 22;
 
 void sdWrite(String dataString);
 float distance(GPS gps_, DCS dcs_);
