@@ -35,7 +35,7 @@ ADCS::ADCS(){
 	dtheta = 0;
 	theta0 =0;
 
-	PGain=6;
+	PGain=8;
 	DGain=0;
 
 	reeltime = 0;
@@ -63,7 +63,7 @@ int ADCS::renew(){
 	theta0 = theta;
 	Serial.println(gettheta());
 
-	if(millis() > reeltime + 10000 && reelcheck==1){
+	if(millis() > reeltime + 10500 && reelcheck==1){
 		digitalWrite(disablePin1, HIGH);
 	}
 
@@ -75,8 +75,9 @@ int ADCS::renew(){
 
 void ADCS::control(){
 	int i = 1;
-
+	long t = millis();
 	while(i==1){
+		if(t+3000 < millis())	{break;}
 
 	//Attitude Control
 	//Object attitude of 
