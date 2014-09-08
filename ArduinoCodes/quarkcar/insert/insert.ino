@@ -8,8 +8,9 @@
 #define MOTORID 219
 
 void insert(float a);
+char camera();
 
-CTS CTS1;
+//CTS CTS1;
 GPS gpsEx;
 Servo Carsteer;
 Servo Camera;
@@ -21,6 +22,8 @@ int center=120;
 int sonar1 = 49;
 int sonardist1 = 100;
 int offset = 11;
+char c=' ';
+char d=' ';
 
 void setup(){ 
   delay(3000);
@@ -58,11 +61,11 @@ void loop(){
   int i = 0;
   Camera.write(90);
   delay(100);
-  val = CTS1.location();
+  val = /*CTS1.location()*/camera();
   if(val == 200){
     for(i = 0;i<181;i++){
       Camera.write(i);
-      val = CTS1.location();
+      val = /*CTS1.location()*/camera();
       delay(100); 
       if(val != 200){
         break;
@@ -107,7 +110,7 @@ void loop(){
     delay(1000);
     while(sonardist1>5){
       Camera.write(90);
-      val = CTS1.location();
+      val = /*CTS1.location()*/camera();
       insert(val);
       sonardist1 = gpsEx.liftsonar(sonar1);
     }
@@ -161,4 +164,29 @@ void insert(float rsangle){
     analogWrite(motor, 181);
     delay(100);
   }
+}
+
+char camera(){
+  if(Serial3.available())
+  {
+    Serial3.write("b");
+    c=Serial3.read();
+    if(c=='a'||c=='b'||c=='c'||c=='e'){
+      return c;
+      //Serial.write(c); // a:left, b:middle, c:right, e:no target
+    }
+    else if(c=='0'){
+      //some sequences
+    }
+      //Serial.print("err, please reboot");
+      //go to back(reboot odroid)
+      
+  }
+//  if(Serial.available())
+//  {
+//    Serial.read
+//    d=Serial.read();
+//    Serial.write(d);
+//    if send "b" then it returns something
+//  }
 }
