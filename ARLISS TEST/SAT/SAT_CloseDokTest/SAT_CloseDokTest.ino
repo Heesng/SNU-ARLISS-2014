@@ -16,7 +16,6 @@ const int chipSelect = 8;
 int ledPin1 = 9;
 int ledpin5 = 13;
 
-
 void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_);
 int readPck(String pck_);
 void compassRenew();
@@ -103,7 +102,15 @@ void loop(){
 
 	if(g==1){
 		mergeData(module,state,gps.getSLat(),gps.getSLng(),gps.getSHgt(),sHeading);
-		sdWrite(sdData);
+		File dataFile = SD.open("datalog.txt", FILE_WRITE);
+
+		// if the file is available, write to it
+		if (dataFile){
+			dataFile.println(dataString);
+			dataFile.close();
+			// print to the serial port too
+			Serial.println(dataString);
+		}
 		Serial.println(rfData);
 		dHgt = gps.getDeltaH();
 	}
@@ -165,12 +172,12 @@ void sdWrite(String dataString){
  	 if(dataFile){
  	 	dataFile.println(dataString);
  	 	dataFile.close();
-    }
-}
+ 	 }
+ 	}
 
-int distance(GPS gps_){
-	float lat1 = gps_.getLat();
-	float lng1 = gps_.getLng();
+ 	int distance(GPS gps_){
+ 		float lat1 = gps_.getLat();
+ 		float lng1 = gps_.getLng();
 
 	if((lat1-rlat)*(lat1-rlat) + (lng1-rlng)*(lng1-rlng) > 0.00009*0.00009) {return 1;}//far away
 	else {return 0;}//close each other
@@ -187,8 +194,8 @@ void mergeData(String module_, String state_, String slat_, String slng_, String
 
 int readPck(String pck_){
 
-  char comma = ',';
-  float temp;
+	char comma = ',';
+	float temp;
 
   int j = pck_.indexOf(comma);//skip the time
   int i = pck_.indexOf(comma,j+1);
@@ -216,34 +223,33 @@ int readPck(String pck_){
 
   if(rslat.length() != 0)
   {
-    rslat.toCharArray(buf0,rslat.length());
-    temp = atof(buf0);
-    if(temp != 0.0) {rlat = temp;}
+  	rslat.toCharArray(buf0,rslat.length());
+  	temp = atof(buf0);
+  	if(temp != 0.0) {rlat = temp;}
 
-    rslng.toCharArray(buf1,rslng.length());
-    temp = atof(buf1);
-    if(temp != 0.0) {rlng = temp;} 
+  	rslng.toCharArray(buf1,rslng.length());
+  	temp = atof(buf1);
+  	if(temp != 0.0) {rlng = temp;} 
 
 
-    rshgt.toCharArray(buf2,rshgt.length());
-    temp = atof(buf2);
-    if(temp != 0.0) {rhgt = temp;}
+  	rshgt.toCharArray(buf2,rshgt.length());
+  	temp = atof(buf2);
+  	if(temp != 0.0) {rhgt = temp;}
 
-    rsheading.toCharArray(buf2,rsheading.length());
-    temp = atof(buf3);
-    if(temp != 0.0) {rheading = temp;}
+  	rsheading.toCharArray(buf2,rsheading.length());
+  	temp = atof(buf3);
+  	if(temp != 0.0) {rheading = temp;}
 
-    return 0;
+  	return 0;
   }
 
   else{
-    rlat = 0;
-    rlng = 0;
-    rhgt = 0;
-    return -1;
+  	rlat = 0;
+  	rlng = 0;
+  	rhgt = 0;
+  	return -1;
   }
 }
-
 
 void compassRenew(){
 	Wire.beginTransmission(SlaveAddress);
