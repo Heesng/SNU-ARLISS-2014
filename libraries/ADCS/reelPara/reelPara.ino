@@ -8,11 +8,11 @@ int i = 0, j = 0;
 void setup(){
 	Serial.begin(9600);
 	delay(3000);
-
 }
 
 void loop(){
+	j = adcs.renew();
 	if(i==0){
-	i = adcs.reelPara();
+		i = adcs.reelPara();
 	}
 }
