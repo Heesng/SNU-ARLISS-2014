@@ -77,7 +77,7 @@ void ADCS::control(){
 	int i = 1;
 	long t = millis();
 	while(i==1){
-		if(t+3000 < millis())	{break;}
+		if(t+3000 < millis()){break;}
 
 	//Attitude Control
 	//Object attitude of 
@@ -138,7 +138,5 @@ int ADCS::reelPara(){
 	reelcheck = 1;
 	return 1;
 }
-
-
 
 float ADCS::gettheta(){return theta;}
