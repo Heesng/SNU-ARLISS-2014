@@ -6,8 +6,6 @@ RF::RF(){
 
 void RF::sendPck(String A)
 {
- 
-
   word16 chescksum = Checksum(A);
   char cs[2];
 
