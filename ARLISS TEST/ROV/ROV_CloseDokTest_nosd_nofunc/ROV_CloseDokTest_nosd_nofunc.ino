@@ -27,12 +27,14 @@ GPS gpsEx;
 Servo Carsteer;
 LSM303 compass;
 int goback = 1;
-float destlat = 40.390186;
-float destlong = 119.217941;
+float destlat = 40.508682;
+float destlong = 119.071004;
+float startlat = 40.509606;
+float startlong = 119.074281;
 float lat;
 float lng;
 float steer_car,dsteer_car,isteer_car = 0, steer_car0;
-float Pgain = 1, Dgain, Igain;
+float Pgain = 5, Dgain, Igain;
 float osteer;
 int motor = 2;
 int r=0,g,d;
@@ -85,7 +87,7 @@ void setup(){
   compass.enableDefault();  
   compass.m_min = (LSM303::vector<int16_t>){
           -223,   -301,   -495  };
-    compass.m_max = (LSM303::vector<int16_t>){
+  compass.m_max = (LSM303::vector<int16_t>){
          +272,   +215,   -444 };
 
   /*
@@ -114,8 +116,10 @@ void loop(){
     state = "M";
     g = gpsEx.renew();
   }
+  
   Serial.println("a");
-
+  g =  gpsEx.renew();
+  
   lat = gpsEx.getLat()/100;
   lng = gpsEx.getLng()/100;
   dataString += String((long)(lat*1000000));
@@ -127,7 +131,7 @@ void loop(){
   compass.read();
   delay(10);
   Serial.println("c");
-  float heading_ = compass.heading((LSM303::vector<int>){1,0,0});
+  float heading_ = compass.heading((LSM303::vector<int>){0,-1,0});
   sHeading = dtostrf(heading_,1,1,Buffer);
   dataString += "	";
   dataString += String((int)(heading_*10));
@@ -136,12 +140,12 @@ void loop(){
   go(destlat,destlong,lat,lng, heading_);
   dataString += "	";
   dataString += String((int)osteer);
-Serial.println("lat");
-Serial.println(lat,6);
-Serial.println("lng");
-Serial.println(lng,6);
-Serial.println("heading");
-Serial.println(heading_);
+  Serial.println("lat");
+  Serial.println(lat,6);
+  Serial.println("lng");
+  Serial.println(lng,6);
+  Serial.println("heading");
+  Serial.println(heading_);
   //steer(destlat,destlong,lat,lng,heading_);
   Serial.println("e");
   File dataFile = SD.open("datalog.txt", FILE_WRITE);
@@ -161,49 +165,59 @@ Serial.println(heading_);
   */
   Serial.println("f");
 
-r = rf.receivePck(rcvPck);
-Serial.println(rcvPck);
-if(r==1){
-  readPck(rcvPck);
-  Serial.print("module: ");
-  Serial.println(rmodule);
-  Serial.print("state: ");
-  Serial.println(rstate);
-  Serial.print("latitude: ");
-  Serial.println(rslat);
-  Serial.print("longitude: ");
-  Serial.println(rslng);
-  Serial.print("height: ");
-  Serial.println(rshgt);
-  Serial.print("heading: ");
-  Serial.println(rsheading);
+  r = rf.receivePck(rcvPck);
+  Serial.println(rcvPck);
+  if(r==1){
+    readPck(rcvPck);
+    Serial.print("module: ");
+    Serial.println(rmodule);
+    Serial.print("state: ");
+    Serial.println(rstate);
+    Serial.print("latitude: ");
+    Serial.println(rslat);
+    Serial.print("longitude: ");
+    Serial.println(rslng);
+    Serial.print("height: ");
+    Serial.println(rshgt);
+    Serial.print("heading: ");
+    Serial.println(rsheading);
   }  // if the file isn't open, pop up an error:
 //  else {
 //    Serial.println("error opening datalog.txt");
 //  }
 //  Serial.println("h");
 }
-//motor neutral = 179~184
+  //motor neutral = 179~184
 //motor possible range = 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
   if(((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) > 0.00009*0.00009)&&goback){
-    analogWrite(motor, 186);
+    analogWrite(motor, 190);
     //Serial.println("Are you in?");
     steer(destlat,destlong,lat,lng,heading_);
     state = "D";
   }
-  else if (goback){
-  //  Serial.println("Now here?");
-    analogWrite(motor, 181);
+  else if(((destlat-lat)*(destlat-lat) + (destlong-lng)*(destlong-lng) <= 0.00009*0.00009)&&goback){
     goback = 0;
-    state = "M";
-    //steer(destlat,destlong,lat,lng, heading_);
   }
+  else if(((startlat-lat)*(startlat-lat) + (startlong-lng)*(startlong-lng) > 0.00009*0.00009)&&(goback == 0)){
+    analogWrite(motor,190);
+    steer(startlat,startlong,lat,lng,heading_);
+  }
+  else{
+    analogWrite(motor,182);
+  }
+  //else if (goback){
+  //  Serial.println("Now here?");
+    //analogWrite(motor, 181);
+    //goback = 0;
+    //state = "M";
+    //steer(destlat,destlong,lat,lng, heading_);
+  //}
 //  if(((startlat-lat)*(startlat-lat) + (startlong-lng)*(startlong-lng) > 0.00009*0.00009)&&goback==0){
 //    analogWrite(motor, 181);
 //    steer(startlat,startlong,lat,lng,heading_);
 //    state = "R";
-//  } 
+//  } 'gg
 //  else if (goback == 0){
 //    analogWrite(motor, 181);
 //  }
@@ -211,7 +225,7 @@ void go(float destlat,float destlong,float lat,float lng,float heading_){
 
 void steer(float destlat,float destlong,float flatitude,float flongitude, float heading_){
   float dy = destlat - flatitude;
-  float dx = /*cos(flatitude*3.141592/180)**/(destlong-flongitude);
+  float dx = (flongitude-destlong);//destlong - flongitude;/*cos(flatitude*3.141592/180)*/
   float angle = atan(dy/dx)*180/3.141592;
   float offset = 0;
   //Serial.println("Yes");
@@ -219,7 +233,7 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
   //float dsy = sin(satheading*3.14/180);
   //int power = 0;//1/((destlat-flatitude)*(destlat-flatitude)+(destlong-flongitude)*(destlong-flongitude));
   // float angle = atan((dy+power*dsy)/(dx+power*dsx))*180/3.141592;
-  if( dy>=0 && dx > 0 ){
+  if( dy>=0 && dx > 0 ){ 
     angle = 90 - angle;
   }
   else if( dy > 0 && dx <= 0 ){
@@ -286,7 +300,7 @@ void steer(float destlat,float destlong,float flatitude,float flongitude, float 
 void mergeData(String module_, String state_, String slat_, String slng_, String shgt_, String sheading_){
 
   long T = millis();
-  String sT = String(T);
+  String sT = String(T);    
 
   rfData = sT +"," +module_ +"," +state_ +"," + slat_ +"," + slng_ +"," + shgt_ +"," + sheading_;
   sdData = sT +"\t"+module_ +"\t"+state_ +"\t"+ slat_ +"\t"+ slng_ +"\t"+ shgt_ +"\t"+ sheading_;

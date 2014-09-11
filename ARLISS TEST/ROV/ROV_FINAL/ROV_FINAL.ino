@@ -51,6 +51,7 @@ int val = 0;
 int data=0;
 int center=120;
 int sonar1 = 49;
+int sonar2 = 43;
 int sonardist1 = 100;
 int offset = 11;
 
@@ -140,6 +141,13 @@ void setup(){
   
   //for sonar
   pinMode(sonar1, INPUT);
+  pinMode(sonar2, INPUT);
+  
+  //for odroid
+  pinMode(45,OUTPUT);//direction
+  pinMode(35,OUTPUT);//enable
+  pinMode(37,OUTPUT);//pwm 
+  
 }
 
 void loop(){
@@ -360,6 +368,7 @@ int readPck(String pck_){
     return -1;
   }
 }
+
 void rendezvous(){
   int i = 0;
   Camera.write(90);
