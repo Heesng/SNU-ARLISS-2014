@@ -15,16 +15,27 @@ void setup()  {
     analogWrite(motor, i);
     delay(10);
   }
-  analogWrite(motor, 173);
+  analogWrite(motor, 170);
   delay(1000);
   analogWrite(motor, 190);
+  delay(1000);
+  analogWrite(motor, 181);
   delay(1000);
   
 } 
 //179~184 ->neutral
 // the loop routine runs over and over again forever:
 void loop()  {
-    analogWrite(motor, 190);
+    analogWrite(motor, 188);
+    delay(5000);
+        analogWrite(motor, 175);
+    delay(5000);
+        analogWrite(motor, 181);
+    delay(5000);
+        analogWrite(motor, 175);
+    delay(5000);
+        analogWrite(motor, 188);
+    delay(5000);
     //analogWrite(motor, 230);
     //delay(10);               
 }

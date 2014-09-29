@@ -3,7 +3,7 @@
 
 #include <GPS.h>
 
-int sonar1 = 49;
+int sonar1 = 47;
 //int sonar2 = 23;
 //int sonar3 = 24;
 
