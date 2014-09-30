@@ -60,7 +60,7 @@ void loop(){
   }
   HerkuleX.moveAngle(MOTORID, 150, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
   delay(1000);
-  while(sonardist1>5){
+  while(sonardist1>8){
     sonardist1 = gpsEx.liftsonar(sonar1);
     val = CTS1.location();
 //    Serial.println(val);
@@ -76,6 +76,7 @@ void loop(){
     HerkuleX.clear(MOTORID);  // If there is an error dectected, clear it
   }
   HerkuleX.moveAngle(MOTORID, -30, 100, HERKULEX_LED_GREEN | HERKULEX_LED_BLUE | HERKULEX_LED_RED);
+  analogWrite(motor, 181);  
   delay(100000);
   sonardist1 = 100;
     
@@ -85,36 +86,36 @@ void insert(float rsangle){
   if(-40<rsangle&&rsangle<40){
     Carsteer.write(90-offset);
     delay(100);
-    analogWrite(motor, 190);
+    analogWrite(motor, 188);
     delay(100);
   }
   else if(40<rsangle&&rsangle<120){
     Carsteer.write(110-offset);
     delay(100);
     analogWrite(motor, 174);
-    delay(100);
+    delay(200);
     Carsteer.write(70-offset);
     delay(100); 
     analogWrite(motor, 174);
-    delay(100);
+    delay(200);
     Carsteer.write(90-offset);
     delay(100);
-    analogWrite(motor, 189);
-    delay(200);
+    analogWrite(motor, 188);
+    delay(100);
   }
   else if(-120<rsangle&&rsangle<-40){
     Carsteer.write(70-offset);
     delay(100); 
     analogWrite(motor, 174);    
-    delay(100);
+    delay(200);
     Carsteer.write(110-offset);
     delay(100);
     analogWrite(motor, 174);
-    delay(100);
+    delay(200);
     Carsteer.write(90-offset);
     delay(100);
-    analogWrite(motor, 189);
-    delay(200);    
+    analogWrite(motor, 188);
+    delay(100);    
   }
   else if (rsangle == 200){
     Carsteer.write(90-offset);
